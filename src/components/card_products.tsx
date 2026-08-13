@@ -16,13 +16,16 @@ interface CardProductsProps {
 
 export default function CardProducts({ product }: CardProductsProps) {
   const addItem = useCartStore((state) => state.addToCart);
-
+  const hasDiscount = product.isOffer;
   return (
     <Card
       sx={{
-        maxWidth: 300,
-        maxHeight: 400,
+        width: "100%",
+        height: "100%",
         borderRadius: 4,
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
         ":hover": {
           boxShadow: 6,
           borderColor: "primary.main",
@@ -38,7 +41,25 @@ export default function CardProducts({ product }: CardProductsProps) {
         alt={product.name}
         sx={{ objectFit: "contain", p: 2 }}
       />
-      <CardContent>
+      {hasDiscount && (
+        <Typography
+          variant="caption"
+          color="white"
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            backgroundColor: "primary.main",
+            borderRadius: 1,
+            px: 1,
+            py: 0.5,
+            fontWeight: "bold",
+          }}
+        >
+          Oferta
+        </Typography>
+      )}
+      <CardContent sx={{ flexGrow: 1 }}>
         <Typography
           gutterBottom
           variant="overline"

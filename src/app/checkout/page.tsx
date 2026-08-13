@@ -19,7 +19,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-import { OrderPayload } from "@/app/types/order";
 import { useCartStore } from "src/hooks/useCartStore";
 
 const baseSchema = z.object({
@@ -81,6 +80,7 @@ export default function Checkout() {
       return;
     }
     setIsSubmitting(true);
+
     const subtotal = items.reduce(
       (acc, item) => acc + item.price * item.quantity,
       0,
@@ -90,24 +90,23 @@ export default function Checkout() {
     const phoneArea = cleanPhone.substring(0, 2);
     const phoneNumber = cleanPhone.substring(2);
 
-    const payload: OrderPayload = {
-      qr_codes: [],
-      charges: [],
+    const payload: any = {
       reference_id: `REF-${Date.now()}`,
       customer: {
         name: data.name,
         email: data.email,
         tax_id: data.tax_id.replace(/\D/g, ""),
-        phone: [
+        phones: [
           {
-            countryCode: "55",
-            areaCode: phoneArea,
+            country: "55",
+            area: phoneArea,
             number: phoneNumber,
+            type: "MOBILE",
           },
         ],
       },
       items: items.map((item) => ({
-        reference_id: item.productId,
+        reference_id: String(item.productId),
         name: item.name,
         quantity: item.quantity,
         unit_amount: item.price,
@@ -119,7 +118,6 @@ export default function Checkout() {
           amount: {
             value: subtotal,
           },
-          expiration_date: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 minutos
         },
       ];
     } else {
@@ -136,10 +134,10 @@ export default function Checkout() {
             installments: 1,
             capture: true,
             card: {
-              number: data.cardNumber,
-              exp_month: data.expMonth,
-              exp_year: data.expYear,
-              security_code: data.cvv,
+              number: data.cardNumber!.replace(/\D/g, ""),
+              exp_month: data.expMonth!,
+              exp_year: data.expYear!,
+              security_code: data.cvv!,
               holder: {
                 name: data.name,
                 tax_id: data.tax_id.replace(/\D/g, ""),
@@ -150,7 +148,7 @@ export default function Checkout() {
       ];
     }
     try {
-      const response = await fetch("/api/checkout", {
+      const response = await fetch("/api/checkout/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -158,16 +156,18 @@ export default function Checkout() {
         body: JSON.stringify(payload),
       });
 
-      const result = await response.json();
+      const responseData = await response.json();
 
       if (!response.ok) {
-        console.error("Erro ao processar o pagamento: ", result);
-        alert("Erro ao processar o pagamento. Por favor, tente novamente.");
+        console.error("Erro ao processar o pagamento: ", responseData);
+        alert("Erro ao processar o pedido. Por favor, tente novamente.");
       }
+      sessionStorage.setItem("lastOrder", JSON.stringify(responseData));
+
       if (response.ok) {
         clearCart();
         router.push("/conclusao");
-        console.log("Pedido criado com sucesso! ", result);
+        console.log("Pedido criado com sucesso! ", responseData);
       }
     } catch (error) {
       console.error("Erro ao processar o pagamento: ", error);
@@ -179,7 +179,14 @@ export default function Checkout() {
   const ccErrors = errors as Record<string, any>;
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 4 }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        mt: 4,
+      }}
+    >
       <Typography variant="h4" component="h1" gutterBottom>
         Checkout
       </Typography>
@@ -290,6 +297,14 @@ export default function Checkout() {
           ) : (
             "Finalizar Compra"
           )}
+        </Button>
+
+        <Button
+          variant="outlined"
+          onClick={() => router.push("/")}
+          sx={{ mt: 2 }}
+        >
+          Voltar para a Loja
         </Button>
       </Paper>
     </Box>

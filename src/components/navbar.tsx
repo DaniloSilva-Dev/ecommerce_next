@@ -1,155 +1,71 @@
-import CartIndicator from "./cart_indicator";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import Link from "next/link";
 import SearchIcon from "@mui/icons-material/Search";
-import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-import { Container } from "@mui/material";
+import Link from "next/link";
 
+import CartIndicator from "./cart_indicator";
 import SearchBar from "./search_bar";
 
 export default function Navbar() {
   return (
-    <AppBar
-      position="static"
-      color="inherit"
-      elevation={0}
-      sx={{
-        borderBottom: "1px solid #e0e0e0",
-        width: "100%",
-        backgroundColor: "var(--neutral-color)",
-      }}
-    >
-      <Container maxWidth="xl">
-        <Toolbar
-          disableGutters
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            minHeight: 64,
-          }}
-        >
+    <header className="w-full border-b border-[#e0e0e0] bg-(--neutral-color)">
+      <div className="mx-auto  ">
+        <div className="flex min-h-16 items-center justify-between">
           {/* lado esquerdo */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-            <Link href="/" passHref style={{ textDecoration: "none" }}>
-              <Typography
-                variant="h6"
-                color="primary"
-                sx={{ fontWeight: "bold", letterSpacing: -0.5 }}
-              >
-                E-commerce
-              </Typography>
-            </Link>
-            <Box
-              sx={{
-                display: { xs: "none", md: "block" },
-                flexGrow: 1,
-                maxWidth: 200,
-              }}
+          <div className="flex items-center gap-6">
+            <Link
+              href="/"
+              className="text-xl font-bold tracking-tight text-(--primary-color) no-underline"
             >
+              E-commerce
+            </Link>
+            <div className="hidden max-w-50 grow min-[900px]:block">
               <SearchBar />
-            </Box>
-          </Box>
+            </div>
+          </div>
 
           {/* centro */}
-          <Box
-            sx={{
-              display: { xs: "none", md: "flex" },
-              gap: 4,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Typography
-              variant="body2"
-              color="text.primary"
-              sx={{
-                fontWeight: 600,
-                borderBottom: "2px solid",
-                borderColor: "primary.main",
-                pb: 0.5,
-                cursor: "pointer",
-              }}
+          <nav className="hidden items-center justify-center gap-8 min-[900px]:flex">
+            <button
+              type="button"
+              className="border-0 border-b-2 border-(--primary-color) bg-transparent pb-1 font-inherit text-sm font-semibold text-(--secondary-color)"
             >
               Loja
-            </Typography>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{
-                fontWeight: 500,
-                pb: 0.5,
-                cursor: "pointer",
-                "&:hover": { color: "primary.main" },
-              }}
+            </button>
+            <button
+              type="button"
+              className="border-0 border-b-2 border-transparent bg-transparent pb-1 font-inherit text-sm font-medium text-slate-500 hover:text-(--primary-color)"
             >
               Categorias
-            </Typography>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{
-                fontWeight: 500,
-                pb: 0.5,
-                cursor: "pointer",
-                "&:hover": { color: "primary.main" },
-              }}
+            </button>
+            <button
+              type="button"
+              className="border-0 border-b-2 border-transparent bg-transparent pb-1 font-inherit text-sm font-medium text-slate-500 hover:text-(--primary-color)"
             >
               Ofertas
-            </Typography>
-          </Box>
+            </button>
+          </nav>
 
           {/* lado direito */}
-          <Box
-            sx={{
-              display: "flex",
-              gap: 1.5,
-              alignItems: "center",
-              justifyContent: "flex-end",
-            }}
-          >
-            <IconButton
-              className="Busca"
-              size="small"
-              sx={{ display: { xs: "inline-flex", md: "none" } }}
+          <div className="flex items-center justify-end gap-3">
+            <button
+              type="button"
+              className="Busca inline-flex cursor-pointer items-center justify-center border-0 bg-transparent p-1 text-slate-500 min-[900px]:hidden"
+              aria-label="buscar"
             >
               <SearchIcon />
-            </IconButton>
+            </button>
 
             <CartIndicator aria-label="carrinho de compra" />
 
-            <IconButton
-              aria-label="login do usuário"
-              size="small"
-              sx={{
-                color: "text.secondary",
-                "&:hover": { color: "primary.main" },
-              }}
+            <Link
+              href="/checkout"
+              className="bg-(--primary-color) font-medium text-white rounded-md px-6 py-6 shrink-0"
+              passHref
             >
-              <PersonOutlineOutlinedIcon />
-            </IconButton>
-
-            <Link href="/checkout" passHref>
-              <IconButton
-                sx={{
-                  textTransform: "none",
-                  color: "white",
-                  backgroundColor: "primary.main",
-                  fontWeight: 500,
-                  borderRadius: 1.5,
-                  px: 3,
-                  display: { xs: "none", md: "inline-flex" },
-                }}
-              >
-                Checkout
-              </IconButton>
+              Checkout
             </Link>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+          </div>
+        </div>
+      </div>
+    </header>
   );
 }

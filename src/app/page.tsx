@@ -1,73 +1,170 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import CardProducts from "@/components/card_products";
+import { Product } from "@/app/types/product";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Navbar from "src/components/navbar";
 import Typography from "@mui/material/Typography";
 import { Button } from "@mui/material";
+import { useSearchParams } from "next/navigation";
+
+
+const itemsMock: Product[] = [
+  {
+    productId: "1",
+    name: "Ingresso Festival Som & Arte",
+    price: 1000,
+    imageUrl: "/ingresso.avif",
+    category: ["ingresso", "evento"],
+    isOffer: false,
+  },
+  {
+    productId: "2",
+    name: "Curso de JavaScript Moderno",
+    price: 2299,
+    imageUrl: "/java.png",
+    category: ["curso", "programação"],
+    isOffer: true,
+  },
+  {
+    productId: "3",
+    name: "Licença Editor Pro - 1 ano",
+    price: 3550,
+    imageUrl: "/editor.png",
+    category: ["licença", "software"],
+    isOffer: true,
+  },
+  {
+    productId: "4",
+    name: "Workshop de Fotografia Criativa",
+    price: 2450,
+    imageUrl: "/workshop.jpg",
+    category: ["curso", "workshop"],
+    isOffer: false,
+  },
+  {
+    productId: "5",
+    name: "Ingresso Teatro: A Última Sessão",
+    price: 1899,
+    imageUrl: "/ingresso.avif",
+    category: ["ingresso", "teatro"],
+    isOffer: false,
+  },
+  {
+    productId: "6",
+    name: "Licença Suite Design Essencial",
+    price: 4199,
+    imageUrl: "/java.png",
+    category: ["licença", "design"],
+    isOffer: false,
+  },
+  {
+    productId: "7",
+    name: "Curso de Marketing Digital",
+    price: 2799,
+    imageUrl: "/editor.png",
+    category: ["curso", "marketing"],
+    isOffer: false,
+  },
+  {
+    productId: "8",
+    name: "Ingresso Conferência Dev Brasil",
+    price: 3199,
+    imageUrl: "/workshop.jpg",
+    category: ["ingresso", "conferência"],
+    isOffer: false,
+  },
+  {
+    productId: "9",
+    name: "Licença Antivírus Premium",
+    price: 4599,
+    imageUrl: "/ingresso.avif",
+    category: ["licença", "segurança"],
+    isOffer: false,
+  },
+  {
+    productId: "10",
+    name: "Curso de UX e Pesquisa de Usuários",
+    price: 2899,
+    imageUrl: "/java.png",
+    category: ["curso", "design"],
+    isOffer: false,
+  },
+  {
+    productId: "11",
+    name: "Ingresso Passeio Cultural Histórico",
+    price: 2199,
+    imageUrl: "/editor.png",
+    category: ["ingresso", "cultura"],
+    isOffer: false,
+  },
+  {
+    productId: "12",
+    name: "Licença Ferramenta de Produtividade",
+    price: 3799,
+    imageUrl: "/workshop.jpg",
+    category: ["licença", "produtividade"],
+    isOffer: false,
+  },
+  {
+    productId: "13",
+    name: "Curso de Fotografia com Celular",
+    price: 3299,
+    imageUrl: "/ingresso.avif",
+    category: ["curso", "fotografia"],
+    isOffer: false,
+  },
+  {
+    productId: "14",
+    name: "Ingresso Festival Gastronômico",
+    price: 4999,
+    imageUrl: "/java.png",
+    category: ["ingresso", "gastronomia"],
+    isOffer: true,
+  },
+  {
+    productId: "15",
+    name: "Licença Plataforma de Música - 1 ano",
+    price: 2499,
+    imageUrl: "/editor.png",
+    category: ["licença", "música"],
+    isOffer: false,
+  },
+  {
+    productId: "16",
+    name: "Curso de Finanças Pessoais",
+    price: 4299,
+    imageUrl: "/workshop.jpg",
+    category: ["curso", "finanças"],
+    isOffer: false,
+  },
+];
 
 export default function Home() {
-  const itemsMock = [
-    {
-      productId: "1",
-      name: "Produto 1",
-      price: 1000,
-      imageUrl: "/headset.jpg",
-      category: ["headset", "tecnologia", "perifericos"],
-    },
-    {
-      productId: "2",
-      name: "Produto 2",
-      price: 2299,
-      imageUrl: "/memoria_ram.webp",
-      category: ["memoria", "tecnologia", "hardware"],
-    },
-    {
-      productId: "3",
-      name: "Produto 3",
-      price: 3550,
-      imageUrl: "/mouse_gamer.jpg",
-      category: ["mouse", "tecnologia", "perifericos"],
-    },
-    {
-      productId: "4",
-      name: "Produto 4",
-      price: 2450,
-      imageUrl: "/teclado_mecanico.webp",
-      category: ["teclado", "tecnologia", "perifericos"],
-    },
-    {
-      productId: "5",
-      name: "Produto 5",
-      price: 1000,
-      imageUrl: "/headset.jpg",
-      category: ["headset", "tecnologia", "perifericos"],
-    },
-    {
-      productId: "6",
-      name: "Produto 6",
-      price: 2299,
-      imageUrl: "/memoria_ram.webp",
-      category: ["memoria", "tecnologia", "hardware"],
-    },
-    {
-      productId: "7",
-      name: "Produto 7",
-      price: 3550,
-      imageUrl: "/mouse_gamer.jpg",
-      category: ["mouse", "tecnologia", "perifericos"],
-    },
-    {
-      productId: "8",
-      name: "Produto 8",
-      price: 2450,
-      imageUrl: "/teclado_mecanico.webp",
-      category: ["teclado", "tecnologia", "perifericos"],
-    },
-  ];
+  const searchParams = useSearchParams();
+  const query = searchParams.get("search")?.toLowerCase() || "";
+
+  const [visibleCount, setVisibleCount] = useState(8);
+  useEffect(() => {
+    setVisibleCount(8); // Reset visible count when search query changes
+  }, [query]);
+
+  const filteredProducts = itemsMock.filter((item) =>
+    item.name.toLowerCase().includes(query)
+  );
+
+  const handleLoadMore = () => {
+    setVisibleCount((prevCount) => prevCount + 4);
+  };
+
+  const visibleItems = filteredProducts.slice(0, visibleCount);
+  const hasMoreItems = visibleCount < filteredProducts.length;
+
   return (
     <>
-      {console.log("renderizou")}
       <Navbar />
       <Container maxWidth="xl" sx={{ mt: 2, mb: 8, borderRadius: 4, p: 2 }}>
         <Box
@@ -80,37 +177,40 @@ export default function Home() {
         >
           <Box>
             <Typography variant="h3" sx={{ mb: 1, fontWeight: "bold" }}>
-              Explore os produtos
+              Explore os produtos digitais
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Confira os produtos mais recentes e populares em nossa loja.
+              Ingressos, licenças e cursos entregues diretamente por email.
             </Typography>
           </Box>
         </Box>
         <Grid container spacing={2} sx={{ p: 2 }}>
-          {itemsMock.map((item) => (
+          {visibleItems.map((item) => (
             <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={item.productId}>
               <CardProducts product={item} />
             </Grid>
           ))}
         </Grid>
 
-        <Button
-          variant="outlined"
-          color="secondary"
-          sx={{
-            mt: 4,
-            display: "block",
-            borderRadius: 2,
-            mx: "auto",
-            ":hover": {
-              backgroundColor: "neutral.main",
-              borderColor: "primary.main",
-            },
-          }}
-        >
-          Carregar mais produtos
-        </Button>
+        {hasMoreItems && (
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => setVisibleCount((current) => current + 4)}
+            sx={{
+              mt: 4,
+              display: "block",
+              borderRadius: 2,
+              mx: "auto",
+              ":hover": {
+                backgroundColor: "neutral.main",
+                borderColor: "primary.main",
+              },
+            }}
+          >
+            Carregar mais produtos
+          </Button>
+        )}
       </Container>
     </>
   );

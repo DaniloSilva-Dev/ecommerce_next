@@ -1,50 +1,32 @@
 import { NextResponse } from "next/server";
-import { OrderPayload } from "@/app/types/order";
 
 export async function POST(request: Request) {
   try {
-    const body: OrderPayload = await request.json();
+    const body = await request.json();
 
-    const PAGBANK_TOKEN = process.env.PAGBANK_TOKEN;
-    if(!PAGBANK_TOKEN) {
-      console.error("PAGBANK_TOKEN não definido");
-      return NextResponse.json(
-        { error: "PAGBANK_TOKEN não definido" }, { status: 500 }
-      );
-    }
-    const apiUrl = "https://sandbox.sdk.pagseguro.com/orders";
+    const token = process.env.PAGBANK_TOKEN;
 
-    const response = await fetch(apiUrl, {
+    const response = await fetch("https://sandbox.api.pagseguro.com/orders", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${PAGBANK_TOKEN}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
-        "Accept": "*/*"
+        Accept: "application/json",
       },
       body: JSON.stringify(body),
     });
 
-    const responseText = await response.text();
-
-    let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch (error) {
-      data = { message: responseText };
-    }
+    const text = await response.text();
 
     if (!response.ok) {
-      console.error("Erro PAGBANK: ", data);
-      return NextResponse.json(
-        { error: data }, { status: response.status }
-      );
+      return NextResponse.json({ error: text }, { status: response.status });
     }
 
-    return NextResponse.json(data, { status: response.status });
-  } catch (error : any) {
-    console.error("Erro INTERNO: ", error.message);
+    return NextResponse.json(JSON.parse(text), { status: 201 });
+  } catch (error) {
     return NextResponse.json(
-      { error: "Erro interno do servidor", details: error.message }, { status: 500 }
+      { error: "Internal Server Error" },
+      { status: 500 },
     );
   }
 }
