@@ -1,4 +1,4 @@
-import "@/app/ui/global.css";
+import "@/app/global.css";
 import AppThemeProvider from "@/theme/app_theme_provider";
 
 export const metadata = {

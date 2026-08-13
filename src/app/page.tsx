@@ -1,16 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import CardProducts from "@/components/card_products";
-import { Product } from "@/app/types/product";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Navbar from "src/components/navbar";
-import Typography from "@mui/material/Typography";
 import { Button } from "@mui/material";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import { useSearchParams } from "next/navigation";
-
+import { useEffect, useState } from "react";
+import Navbar from "src/components/navbar";
+import { Card } from "src/components/primitives/card";
+import type { Product } from "@/app/types/product";
+import { CardProduct } from "@/components/card_products";
+import { useCartStore } from "@/hooks/useCartStore";
 
 const itemsMock: Product[] = [
   {
@@ -147,13 +148,16 @@ export default function Home() {
   const searchParams = useSearchParams();
   const query = searchParams.get("search")?.toLowerCase() || "";
 
+  const addItemToCart = useCartStore((state) => state.addToCart);
+
   const [visibleCount, setVisibleCount] = useState(8);
+
   useEffect(() => {
     setVisibleCount(8); // Reset visible count when search query changes
   }, [query]);
 
   const filteredProducts = itemsMock.filter((item) =>
-    item.name.toLowerCase().includes(query)
+    item.name.toLowerCase().includes(query),
   );
 
   const handleLoadMore = () => {
@@ -162,6 +166,10 @@ export default function Home() {
 
   const visibleItems = filteredProducts.slice(0, visibleCount);
   const hasMoreItems = visibleCount < filteredProducts.length;
+
+  const handleAddProductToCheckout = (product: Product) => {
+    addItemToCart(product);
+  };
 
   return (
     <>
@@ -187,9 +195,25 @@ export default function Home() {
         <Grid container spacing={2} sx={{ p: 2 }}>
           {visibleItems.map((item) => (
             <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={item.productId}>
-              <CardProducts product={item} />
+              <CardProduct
+                product={item}
+                onClick={handleAddProductToCheckout}
+              />
             </Grid>
           ))}
+
+          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+            <Card disabled>
+              <div style={{ height: 100 }}>imagem</div>
+
+              <Card.Body>
+                <button type="button" onClick={() => alert("fui clicado")}>
+                  {" "}
+                  adicionar
+                </button>
+              </Card.Body>
+            </Card>
+          </Grid>
         </Grid>
 
         {hasMoreItems && (

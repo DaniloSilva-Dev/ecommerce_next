@@ -15,6 +15,7 @@
     "@hookform/resolvers": "^5.7.1",
     "@mui/icons-material": "^9.3.1",
     "@mui/material": "^9.2.0",
+    "classnames": "^2.5.1",
     "next": "16.2.12",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -35,5 +36,12 @@
   "overrides": {
     "postcss": "latest",
     "sharp": "latest"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "npm",
+      "version": "12.0.2",
+      "onFail": "download"
+    }
   }
 }

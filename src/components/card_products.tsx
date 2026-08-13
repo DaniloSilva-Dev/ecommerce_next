@@ -1,22 +1,24 @@
 "use client";
 
+import AddShoppingCart from "@mui/icons-material/AddShoppingCart";
+import { Button, CardActions } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { Button, CardActions } from "@mui/material";
-import AddShoppingCart from "@mui/icons-material/AddShoppingCart";
 
-import { Product } from "@/app/types/product";
+import type { Product } from "@/app/types/product";
 import { useCartStore } from "@/hooks/useCartStore";
 
 interface CardProductsProps {
   product: Product;
+  onClick: (product: Product) => void;
 }
 
-export default function CardProducts({ product }: CardProductsProps) {
-  const addItem = useCartStore((state) => state.addToCart);
+export function CardProduct({ product, onClick }: CardProductsProps) {
+  // const addItem = useCartStore((state) => state.addToCart);
   const hasDiscount = product.isOffer;
+
   return (
     <Card
       sx={{
@@ -93,7 +95,7 @@ export default function CardProducts({ product }: CardProductsProps) {
             fontWeight: 500,
             ":hover": { backgroundColor: "primary.main", color: "white" },
           }}
-          onClick={() => addItem(product)}
+          onClick={() => onClick(product)}
         >
           Adicionar
         </Button>
