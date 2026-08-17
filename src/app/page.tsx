@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
@@ -12,7 +11,7 @@ import { Card } from "src/components/primitives/card";
 import type { Product } from "@/app/types/product";
 import { CardProduct } from "@/components/card_products";
 import { useCartStore } from "@/hooks/useCartStore";
-
+import { Button } from "src/components/primitives/button";
 const itemsMock: Product[] = [
   {
     productId: "1",
@@ -203,33 +202,29 @@ export default function Home() {
           ))}
 
           <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <Card disabled>
-              <div style={{ height: 100 }}>imagem</div>
-
-              <Card.Body>
-                <button type="button" onClick={() => alert("fui clicado")}>
-                  {" "}
-                  adicionar
-                </button>
+            <Card>
+              <Card.Image src="/ingresso.avif" alt="Ingresso" />
+              <Card.Body onClick={() => alert("fui clicado")}>
+                <span>INGRESSO • TEATRO</span>
+                <h3>Ingresso Teatro: A Última Sessão</h3>
+                <span>R$ 18,99</span>
               </Card.Body>
+                <Button variant="secondary" onClick={() => alert("botão")}>
+                  teste
+                </Button>
             </Card>
           </Grid>
         </Grid>
 
         {hasMoreItems && (
           <Button
-            variant="outlined"
             color="secondary"
             onClick={() => setVisibleCount((current) => current + 4)}
-            sx={{
-              mt: 4,
+            style={{
+              marginTop: 4,
               display: "block",
               borderRadius: 2,
-              mx: "auto",
-              ":hover": {
-                backgroundColor: "neutral.main",
-                borderColor: "primary.main",
-              },
+              marginInline: "auto",
             }}
           >
             Carregar mais produtos

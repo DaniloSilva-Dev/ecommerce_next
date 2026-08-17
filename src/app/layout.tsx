@@ -13,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body style={{ backgroundColor: "var(--neutral-color)" }}>
+      <body style={{ backgroundColor: "var(--secondary-color)" }}>
         <AppThemeProvider>{children}</AppThemeProvider>
       </body>
     </html>

@@ -3,12 +3,14 @@ import Link from "next/link";
 
 import CartIndicator from "./cart_indicator";
 import SearchBar from "./search_bar";
+import { Button } from "./primitives/button";
 
 export default function Navbar() {
   return (
-    <header className="w-full border-b border-[#e0e0e0] bg-(--neutral-color)">
-      <div className="mx-auto  ">
-        <div className="flex min-h-16 items-center justify-between">
+    <header className="w-full border-b border-[#e0e0e0] bg-(--secondary-color)">
+      
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 xl:px-0">
+          
           {/* lado esquerdo */}
           <div className="flex items-center gap-6">
             <Link
@@ -56,16 +58,11 @@ export default function Navbar() {
 
             <CartIndicator aria-label="carrinho de compra" />
 
-            <Link
-              href="/checkout"
-              className="bg-(--primary-color) font-medium text-white rounded-md px-6 py-6 shrink-0"
-              passHref
-            >
+            <Button>    
               Checkout
-            </Link>
+            </Button>
           </div>
-        </div>
-      </div>
+          </div>
     </header>
   );
 }

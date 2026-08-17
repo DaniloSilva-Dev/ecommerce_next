@@ -1,9 +1,7 @@
 import cx from "classnames";
 import styles from "./card.module.css";
+import Image from "next/image";
 
-// export type CardProps = {
-// disabled: boolean
-// } & React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
 
 export interface CardProps
   extends React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>> {
@@ -24,8 +22,31 @@ export function Card({ children, className, disabled, ...props }: CardProps) {
   );
 }
 
-function CardBody({ children }: React.PropsWithChildren) {
-  return <div className={styles.cardBody}>{children}</div>;
+export interface CardImageProps extends React.HTMLAttributes<HTMLDivElement> {
+  src: string;
+  alt: string;
 }
 
+function CardBody({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cx(styles.cardBody, className)} {...props}>
+      {children}
+    </div>
+  );
+}
+
+function CardImage({ src, alt, className, ...props }: CardImageProps) {
+  return (
+    <div className={cx(styles.cardImage, className)} {...props}>
+      <Image 
+        src={src} 
+        alt={alt} 
+        fill 
+        className="object-cover" 
+      />
+    </div>
+  );
+}
+
+Card.Image = CardImage;
 Card.Body = CardBody;
