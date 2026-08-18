@@ -2,7 +2,6 @@ import cx from "classnames";
 import styles from "./card.module.css";
 import Image from "next/image";
 
-
 export interface CardProps
   extends React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>> {
   disabled?: boolean;
@@ -27,7 +26,11 @@ export interface CardImageProps extends React.HTMLAttributes<HTMLDivElement> {
   alt: string;
 }
 
-function CardBody({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+function CardBody({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div className={cx(styles.cardBody, className)} {...props}>
       {children}
@@ -38,17 +41,16 @@ function CardBody({ children, className, ...props }: React.HTMLAttributes<HTMLDi
 function CardImage({ src, alt, className, ...props }: CardImageProps) {
   return (
     <div className={cx(styles.cardImage, className)} {...props}>
-      <Image 
-        src={src} 
-        alt={alt} 
-        fill 
-        className="object-cover" 
-      />
+      <Image src={src} alt={alt} fill className="object-cover" />
     </div>
   );
 }
 
-function CardFooter({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+function CardFooter({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div className={cx(styles.cardFooter, className)} {...props}>
       {children}

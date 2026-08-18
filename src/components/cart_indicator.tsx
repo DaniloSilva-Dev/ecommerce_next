@@ -18,7 +18,7 @@ export default function CartIndicator() {
   if (!isMounted) {
     return (
       <IconButton
-        size="small"
+        size="large"
         sx={{
           color: "text.secondary",
           "&:hover": { color: "primary.main" },
@@ -34,15 +34,26 @@ export default function CartIndicator() {
   return (
     <Box>
       <IconButton
-        size="small"
+        size="large"
         onClick={toggleCart}
         sx={{
           color: "text.secondary",
           "&:hover": { color: "primary.main" },
         }}
       >
-        <Badge badgeContent={totalItems} color="primary" showZero>
-          <ShoppingCartOutlinedIcon />
+        <Badge
+          badgeContent={totalItems}
+          color="primary"
+          showZero
+          sx={{
+            "& .MuiBadge-badge": {
+              fontSize: "1.2rem",
+              height: "1.8rem",
+              minWidth: "1.8rem",
+            },
+          }}
+        >
+          <ShoppingCartOutlinedIcon fontSize="large" />
         </Badge>
       </IconButton>
 

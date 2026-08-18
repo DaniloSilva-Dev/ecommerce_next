@@ -187,7 +187,11 @@ export default function Home() {
             <Typography variant="h3" sx={{ mb: 1, fontWeight: "bold" }}>
               Explore os produtos digitais
             </Typography>
-            <Typography variant="body1" color="text.secondary">
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              style={{ fontSize: "1.8rem" }}
+            >
               Ingressos, licenças e cursos entregues diretamente por email.
             </Typography>
           </Box>
@@ -201,19 +205,17 @@ export default function Home() {
               />
             </Grid>
           ))}
-
-
         </Grid>
 
         {hasMoreItems && (
-         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}> 
-          <Button
-            variant="tertiary"
-            onClick={() => setVisibleCount((current) => current + 4)}
-          >
-            Carregar mais produtos
-          </Button>
-        </Box>
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+            <Button
+              variant="tertiary"
+              onClick={() => setVisibleCount((current) => current + 4)}
+            >
+              Carregar mais produtos
+            </Button>
+          </Box>
         )}
       </Container>
     </>

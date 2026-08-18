@@ -5,15 +5,15 @@ import Box from "@mui/material/Box";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { searchParamsToUrlQuery } from "next/dist/shared/lib/router/utils/querystring";
-
 
 export default function SearchBar() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [searchTerm, setSearchTerm] = useState(searchParams.get("search")?.toString() || "");
+  const [searchTerm, setSearchTerm] = useState(
+    searchParams.get("search")?.toString() || "",
+  );
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const term = event.target.value;
@@ -34,12 +34,13 @@ export default function SearchBar() {
       sx={{
         display: "flex",
         alignItems: "center",
-        bgcolor: "#f3f4f6",
+        border: "0.1rem solid var(--neutral-color)",
+        bgcolor: "var(--neutral-color)",
         borderRadius: 4,
-        px: 2,
+        px: 1,
         py: 0.5,
         flexGrow: 1,
-        maxWidth: 400,
+        maxWidth: 600,
       }}
     >
       <SearchIcon sx={{ color: "text.secondary", mr: 1, fontSize: 20 }} />
@@ -47,7 +48,7 @@ export default function SearchBar() {
         placeholder="Pesquisar produtos"
         value={searchTerm}
         onChange={handleSearchChange}
-        sx={{ flex: 1, fontSize: "0.875rem" }}
+        sx={{ flex: 1, fontSize: "1.4rem" }}
       />
     </Box>
   );

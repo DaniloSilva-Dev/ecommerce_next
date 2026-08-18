@@ -21,7 +21,7 @@ export default function Conclusao() {
   const pixText = isPix ? order.qr_codes[0].text : "";
   const pixImage = isPix
     ? order.qr_codes[0].links.find((link: any) => link.rel === "QRCODE.PNG")
-      ?.href
+        ?.href
     : "";
 
   useEffect(() => {
@@ -46,7 +46,6 @@ export default function Conclusao() {
     return () => clearInterval(interval); // Limpa o intervalo ao desmontar o componente
   }, [order, isPix]);
 
-
   if (!order) {
     return (
       <Box
@@ -64,7 +63,6 @@ export default function Conclusao() {
     );
   }
 
-
   return (
     <Box sx={{ maxWidth: 600, mx: "auto", p: 4, textAlign: "center" }}>
       <Paper
@@ -77,41 +75,41 @@ export default function Conclusao() {
         }}
       >
         {isPaid ? (
-          <Box sx={{ mb: 2, display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+          <Box
+            sx={{
+              mb: 2,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
             <Typography variant="h1" color="success.main">
               Pagamento Confirmado!
             </Typography>
             <Typography variant="body1">
               Obrigado pela sua compra. Seu pedido está sendo processado.
             </Typography>
-            <Typography variant="h2">
-              Dados do Comprador
-            </Typography>
-            <Typography variant="body1">
-              {order.customer.name}
-            </Typography>
-            <Typography variant="body1">
-              {order.customer.email}
-            </Typography>
-            <Typography variant="h2">
-              Dados do Pedido
-            </Typography>
+            <Typography variant="h2">Dados do Comprador</Typography>
+            <Typography variant="body1">{order.customer.name}</Typography>
+            <Typography variant="body1">{order.customer.email}</Typography>
+            <Typography variant="h2">Dados do Pedido</Typography>
             <Typography variant="body1">
               ID de Transação: {order.charges?.[0].id}
             </Typography>
             <Typography variant="body1">
-              Valor Total: {new Intl.NumberFormat("pt-BR", {
+              Valor Total:{" "}
+              {new Intl.NumberFormat("pt-BR", {
                 style: "currency",
                 currency: "BRL",
               }).format(order.charges?.[0].amount.value / 100)}
             </Typography>
             <Typography variant="body1">
-              Status do Pagamento: {order.charges?.[0].status === "PAID" ? "Pago" : "Pendente"}
+              Status do Pagamento:{" "}
+              {order.charges?.[0].status === "PAID" ? "Pago" : "Pendente"}
             </Typography>
 
-            <Typography variant="h2">
-              Produtos Comprados
-            </Typography>
+            <Typography variant="h2">Produtos Comprados</Typography>
             {order.items.map((item: any, index: number) => (
               <Box key={index} sx={{ mb: 1 }}>
                 <Typography variant="body1">
@@ -134,14 +132,14 @@ export default function Conclusao() {
               Voltar para a Loja
             </Button>
           </Box>
-        ) : <>
-          <Typography variant="h4" color="success.main">
-            Pedido confirmado, Aguardando Pagamento
-          </Typography>
-          <Typography>ID do Pedido: {order.id}</Typography>
-        </>}
-
-
+        ) : (
+          <>
+            <Typography variant="h4" color="success.main">
+              Pedido confirmado, Aguardando Pagamento
+            </Typography>
+            <Typography>ID do Pedido: {order.id}</Typography>
+          </>
+        )}
 
         {isPix && !isPaid && (
           <Box
@@ -187,7 +185,11 @@ export default function Conclusao() {
               </Typography>
             )}
 
-            <Button variant="contained" sx={{ mx: 2 }} onClick={() => router.push("/")}>
+            <Button
+              variant="contained"
+              sx={{ mx: 2 }}
+              onClick={() => router.push("/")}
+            >
               Voltar para a Loja
             </Button>
           </Box>
