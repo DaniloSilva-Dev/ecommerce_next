@@ -12,6 +12,7 @@ import type { Product } from "@/app/types/product";
 import { CardProduct } from "@/components/card_products";
 import { useCartStore } from "@/hooks/useCartStore";
 import { Button } from "src/components/primitives/button";
+import { AddShoppingCart } from "@mui/icons-material";
 const itemsMock: Product[] = [
   {
     productId: "1",
@@ -201,34 +202,18 @@ export default function Home() {
             </Grid>
           ))}
 
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <Card>
-              <Card.Image src="/ingresso.avif" alt="Ingresso" />
-              <Card.Body onClick={() => alert("fui clicado")}>
-                <span>INGRESSO • TEATRO</span>
-                <h3>Ingresso Teatro: A Última Sessão</h3>
-                <span>R$ 18,99</span>
-              </Card.Body>
-                <Button variant="secondary" onClick={() => alert("botão")}>
-                  teste
-                </Button>
-            </Card>
-          </Grid>
+
         </Grid>
 
         {hasMoreItems && (
+         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}> 
           <Button
-            color="secondary"
+            variant="tertiary"
             onClick={() => setVisibleCount((current) => current + 4)}
-            style={{
-              marginTop: 4,
-              display: "block",
-              borderRadius: 2,
-              marginInline: "auto",
-            }}
           >
             Carregar mais produtos
           </Button>
+        </Box>
         )}
       </Container>
     </>

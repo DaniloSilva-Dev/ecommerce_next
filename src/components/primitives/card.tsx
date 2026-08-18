@@ -48,5 +48,14 @@ function CardImage({ src, alt, className, ...props }: CardImageProps) {
   );
 }
 
+function CardFooter({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cx(styles.cardFooter, className)} {...props}>
+      {children}
+    </div>
+  );
+}
+
+Card.Footer = CardFooter;
 Card.Image = CardImage;
 Card.Body = CardBody;

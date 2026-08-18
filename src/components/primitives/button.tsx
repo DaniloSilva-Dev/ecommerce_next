@@ -4,7 +4,7 @@ import styles from "./button.module.css";
 
 export interface ButtonProps
     extends React.ButtonHTMLAttributes<HTMLButtonElement>{
-        variant?: "primary" | "secondary" | "terciary";
+        variant?: "primary" | "secondary" | "tertiary";
         size?: "sm" | "md" | "lg";
     }
 
