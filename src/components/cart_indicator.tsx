@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { Badge, Box, IconButton } from "@mui/material";
 
-import { useCartStore } from "@/hooks/useCartStore";
+import { useCartStore } from "src/hooks/use_cart_store";
 import CartDrawer from "@/components/cart_drawer";
 
 export default function CartIndicator() {

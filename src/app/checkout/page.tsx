@@ -1,312 +1,493 @@
 "use client";
-import { useState } from "react";
+
 import {
   Box,
   TextField,
-  Button,
   Typography,
-  Paper,
-  FormControl,
-  FormLabel,
   RadioGroup,
   FormControlLabel,
   Radio,
   Grid,
   CircularProgress,
+  Paper,
+  Divider,
+  Container,
 } from "@mui/material";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import PersonOutlineIcon from "@mui/icons-material/Person";
+import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
+import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
+import QrCodeIcon from "@mui/icons-material/QrCode";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
+import DeleteOutlineIcon from "@mui/icons-material/Delete";
 
-import { useCartStore } from "src/hooks/useCartStore";
+import { useCheckout } from "@/hooks/use_checkout";
+import { Button } from "@/components/primitives/button";
 
-const baseSchema = z.object({
-  name: z.string().min(1, "Nome é obrigatório"),
-  email: z.email("Email inválido"),
-  tax_id: z.string().min(11, "CPF é obrigatório").max(14, "Documento inválido"),
-  phone: z.string().min(10, "Telefone é obrigatório"),
-});
-
-const paymentSchema = z.discriminatedUnion("paymentMethod", [
-  z.object({
-    paymentMethod: z.literal("PIX"),
-  }),
-  z.object({
-    paymentMethod: z.literal("CREDIT_CARD"),
-    cardNumber: z
-      .string()
-      .min(16, "Número do cartão inválido")
-      .max(16, "Número do cartão inválido"),
-    expMonth: z
-      .string()
-      .min(2, "Mês de expiração inválido")
-      .max(2, "Mês de expiração inválido"),
-    expYear: z
-      .string()
-      .min(4, "Ano de expiração inválido")
-      .max(4, "Ano de expiração inválido"),
-    cvv: z.string().min(3, "CVV inválido").max(4, "CVV inválido"),
-  }),
-]);
-
-const checkoutSchema = z.intersection(baseSchema, paymentSchema);
-type CheckoutFormData = z.infer<typeof checkoutSchema>;
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(amount / 100);
+};
 
 export default function Checkout() {
-  const { cartItems: items, clearCart } = useCartStore();
-  const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { form, onSubmit, buscarCep, isSubmitting, paymentMethod, items } =
+    useCheckout();
 
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-  } = useForm<CheckoutFormData>({
-    resolver: zodResolver(checkoutSchema),
-    defaultValues: {
-      paymentMethod: "CREDIT_CARD",
-    },
-  });
-
-  const paymentMethod = watch("paymentMethod");
-
-  const onSubmit = async (data: CheckoutFormData) => {
-    if (items.length === 0) {
-      alert(
-        "O carrinho está vazio. Adicione produtos antes de finalizar a compra.",
-      );
-      return;
-    }
-    setIsSubmitting(true);
-
-    const subtotal = items.reduce(
-      (acc, item) => acc + item.price * item.quantity,
-      0,
-    );
-
-    const cleanPhone = data.phone.replace(/\D/g, "");
-    const phoneArea = cleanPhone.substring(0, 2);
-    const phoneNumber = cleanPhone.substring(2);
-
-    const payload: any = {
-      reference_id: `REF-${Date.now()}`,
-      customer: {
-        name: data.name,
-        email: data.email,
-        tax_id: data.tax_id.replace(/\D/g, ""),
-        phones: [
-          {
-            country: "55",
-            area: phoneArea,
-            number: phoneNumber,
-            type: "MOBILE",
-          },
-        ],
-      },
-      items: items.map((item) => ({
-        reference_id: String(item.productId),
-        name: item.name,
-        quantity: item.quantity,
-        unit_amount: item.price,
-      })),
-    };
-    if (data.paymentMethod === "PIX") {
-      payload.qr_codes = [
-        {
-          amount: {
-            value: subtotal,
-          },
-        },
-      ];
-    } else {
-      payload.charges = [
-        {
-          reference_id: `CHG-${Date.now()}`,
-          description: "Compra no Ecommerce",
-          amount: {
-            value: subtotal,
-            currency: "BRL",
-          },
-          payment_method: {
-            type: "CREDIT_CARD",
-            installments: 1,
-            capture: true,
-            card: {
-              number: data.cardNumber!.replace(/\D/g, ""),
-              exp_month: data.expMonth!,
-              exp_year: data.expYear!,
-              security_code: data.cvv!,
-              holder: {
-                name: data.name,
-                tax_id: data.tax_id.replace(/\D/g, ""),
-              },
-            },
-          },
-        },
-      ];
-    }
-    try {
-      const response = await fetch("/api/checkout/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        console.error("Erro ao processar o pagamento: ", responseData);
-        alert("Erro ao processar o pedido. Por favor, tente novamente.");
-      }
-      sessionStorage.setItem("lastOrder", JSON.stringify(responseData));
-
-      if (response.ok) {
-        clearCart();
-        router.push("/conclusao");
-        console.log("Pedido criado com sucesso! ", responseData);
-      }
-    } catch (error) {
-      console.error("Erro ao processar o pagamento: ", error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  } = form;
 
   const ccErrors = errors as Record<string, any>;
 
+  const subtotal = items.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0,
+  );
+
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        mt: 4,
-      }}
-    >
-      <Typography variant="h4" component="h1" gutterBottom>
-        Checkout
-      </Typography>
-
-      <Paper
-        component="form"
-        onSubmit={handleSubmit(onSubmit)}
-        sx={{ p: 4, width: "100%", maxWidth: 600 }}
-      >
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <Typography variant="h6">Informações do Cliente</Typography>
-          <TextField
-            label="Nome"
-            {...register("name")}
-            error={!!errors.name}
-            helperText={errors.name?.message}
-          />
-          <TextField
-            label="Email"
-            {...register("email")}
-            error={!!errors.email}
-            helperText={errors.email?.message}
-          />
-          <TextField
-            label="CPF"
-            {...register("tax_id")}
-            error={!!errors.tax_id}
-            helperText={errors.tax_id?.message}
-          />
-          <TextField
-            label="Telefone"
-            {...register("phone")}
-            error={!!errors.phone}
-            helperText={errors.phone?.message}
-          />
-        </Box>
-
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
-          <Typography variant="h6">Pagamento</Typography>
-
-          <FormControl>
-            <FormLabel>Método de Pagamento</FormLabel>
-            <RadioGroup row defaultValue="CREDIT_CARD" sx={{ mt: 1 }}>
-              <FormControlLabel
-                value="CREDIT_CARD"
-                control={<Radio {...register("paymentMethod")} />}
-                label="Cartão de Crédito"
-              />
-              <FormControlLabel
-                value="PIX"
-                control={<Radio {...register("paymentMethod")} />}
-                label="PIX"
-              />
-            </RadioGroup>
-          </FormControl>
-
-          {paymentMethod === "CREDIT_CARD" && (
-            <Grid container spacing={2}>
-              <Grid size={12}>
-                <TextField
-                  label="Número do Cartão"
-                  {...register("cardNumber")}
-                  error={!!ccErrors.cardNumber}
-                  helperText={ccErrors.cardNumber?.message}
-                  fullWidth
-                />
-              </Grid>
-              <Grid size={4}>
-                <TextField
-                  label="Mês de Expiração (MM)"
-                  {...register("expMonth")}
-                  error={!!ccErrors.expMonth}
-                  helperText={ccErrors.expMonth?.message}
-                  fullWidth
-                />
-              </Grid>
-              <Grid size={4}>
-                <TextField
-                  label="Ano de Expiração (AAAA)"
-                  {...register("expYear")}
-                  error={!!ccErrors.expYear}
-                  helperText={ccErrors.expYear?.message}
-                  fullWidth
-                />
-              </Grid>
-              <Grid size={4}>
-                <TextField
-                  label="CVV"
-                  {...register("cvv")}
-                  error={!!ccErrors.cvv}
-                  helperText={ccErrors.cvv?.message}
-                  fullWidth
-                />
-              </Grid>
-            </Grid>
-          )}
-        </Box>
-
-        <Button
-          type="submit"
-          variant="contained"
-          size="large"
-          sx={{ mt: 3 }}
-          disabled={isSubmitting || items.length === 0}
+    <Box sx={{ backgroundColor: "#f9fafb", minHeight: "100vh", pb: 8, pt: 4 }}>
+      <Container maxWidth="lg">
+        <Typography
+          variant="h5"
+          component="h1"
+          sx={{ fontWeight: "bold", mb: 4 }}
+          gutterBottom
         >
-          {isSubmitting ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : (
-            "Finalizar Compra"
-          )}
-        </Button>
+          Finalizar Pedido
+        </Typography>
 
-        <Button
-          variant="outlined"
-          onClick={() => router.push("/")}
-          sx={{ mt: 2 }}
-        >
-          Voltar para a Loja
-        </Button>
-      </Paper>
+        <Grid container spacing={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Paper
+              variant="outlined"
+              sx={{ p: 3, borderRadius: 2, borderColor: "#e5e7eb" }}
+            >
+              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 3 }}>
+                Resumo do Pedido
+              </Typography>
+
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                {items.map((item) => (
+                  <Box
+                    key={item.productId}
+                    sx={{ display: "flex", gap: 2, alignItems: "center" }}
+                  >
+                    <Box
+                      sx={{
+                        width: 60,
+                        height: 60,
+                        backgroundColor: "#f3f4f6",
+                        borderRadius: 1,
+                        flexShrink: 0,
+                      }}
+                      component="img"
+                      src={item.imageUrl}
+                      alt={item.name}
+                    />
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontWeight: "bold", lineHeight: 1.2 }}
+                      >
+                        {item.name}
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          mt: 1,
+                        }}
+                      >
+                        <Typography variant="caption" color="text.secondary">
+                          Qtd: {item.quantity}
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                          {formatCurrency(item.price)}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <DeleteOutlineIcon
+                      fontSize="small"
+                      sx={{ color: "text.secondary", cursor: "pointer" }}
+                    />
+                  </Box>
+                ))}
+              </Box>
+
+              <Divider sx={{ my: 3 }} />
+
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Subtotal
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: "medium" }}>
+                    {formatCurrency(subtotal)}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Frete
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: "bold" }}
+                    color="primary"
+                  >
+                    GRÁTIS
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Divider sx={{ my: 3 }} />
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  Total
+                </Typography>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: "bold" }}
+                  color="primary"
+                >
+                  {formatCurrency(subtotal)}
+                </Typography>
+              </Box>
+            </Paper>
+          </Grid>
+
+
+          <Grid size={{ xs: 12, md: 8 }}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              {/* 1. DADOS DO COMPRADOR */}
+              <Paper
+                variant="outlined"
+                sx={{ p: 4, borderRadius: 2, borderColor: "#e5e7eb", mb: 3 }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                    mb: 3,
+                  }}
+                >
+                  <PersonOutlineIcon color="primary" />
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    1. Dados do Comprador
+                  </Typography>
+                </Box>
+
+                <Grid container spacing={2.5}>
+                  <Grid size={{ xs: 12 }}>
+                    <TextField
+                      size="small"
+                      label="Nome Completo"
+                      {...register("name")}
+                      error={!!errors.name}
+                      helperText={errors.name?.message}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      size="small"
+                      label="E-mail"
+                      {...register("email")}
+                      error={!!errors.email}
+                      helperText={errors.email?.message}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      size="small"
+                      label="CPF"
+                      {...register("tax_id")}
+                      error={!!errors.tax_id}
+                      helperText={errors.tax_id?.message}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      size="small"
+                      label="Telefone"
+                      {...register("phone")}
+                      error={!!errors.phone}
+                      helperText={errors.phone?.message}
+                      fullWidth
+                    />
+                  </Grid>
+                </Grid>
+              </Paper>
+
+              {/* 2. ENDEREÇO DE ENTREGA */}
+              <Paper
+                variant="outlined"
+                sx={{ p: 4, borderRadius: 2, borderColor: "#e5e7eb", mb: 3 }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                    mb: 3,
+                  }}
+                >
+                  <LocalShippingOutlinedIcon color="primary" />
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    2. Endereço de Entrega
+                  </Typography>
+                </Box>
+
+                <Grid container spacing={2.5}>
+                  <Grid size={{ xs: 12, sm: 4 }}>
+                    <TextField
+                      size="small"
+                      label="CEP"
+                      {...register("cep")}
+                      onBlur={buscarCep}
+                      error={!!errors.cep}
+                      helperText={errors.cep?.message}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 8 }}>
+                    <TextField
+                      size="small"
+                      label="Rua / Avenida"
+                      {...register("logradouro")}
+                      error={!!errors.logradouro}
+                      helperText={errors.logradouro?.message}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 4 }}>
+                    <TextField
+                      size="small"
+                      label="Número"
+                      {...register("numero")}
+                      error={!!errors.numero}
+                      helperText={errors.numero?.message}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 8 }}>
+                    <TextField
+                      size="small"
+                      label="Complemento (Opcional)"
+                      {...register("complemento")}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 5 }}>
+                    <TextField
+                      size="small"
+                      label="Bairro"
+                      {...register("bairro")}
+                      error={!!errors.bairro}
+                      helperText={errors.bairro?.message}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 5 }}>
+                    <TextField
+                      size="small"
+                      label="Cidade"
+                      {...register("cidade")}
+                      error={!!errors.cidade}
+                      helperText={errors.cidade?.message}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 2 }}>
+                    <TextField
+                      size="small"
+                      label="UF"
+                      {...register("uf")}
+                      error={!!errors.uf}
+                      helperText={errors.uf?.message}
+                      fullWidth
+                    />
+                  </Grid>
+                </Grid>
+              </Paper>
+
+              {/* 3. FORMA DE PAGAMENTO */}
+              <Paper
+                variant="outlined"
+                sx={{ p: 4, borderRadius: 2, borderColor: "#e5e7eb", mb: 4 }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5,
+                    mb: 3,
+                  }}
+                >
+                  <PaymentsOutlinedIcon color="primary" />
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    3. Forma de Pagamento
+                  </Typography>
+                </Box>
+
+                <RadioGroup defaultValue="CREDIT_CARD" sx={{ gap: 1.5, mb: 3 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      border: "1px solid",
+                      borderColor:
+                        paymentMethod === "PIX" ? "primary.main" : "#e5e7eb",
+                      borderRadius: 2,
+                      p: 1,
+                      backgroundColor:
+                        paymentMethod === "PIX" ? "#f4f6ff" : "transparent",
+                    }}
+                  >
+                    <FormControlLabel
+                      value="PIX"
+                      control={<Radio {...register("paymentMethod")} />}
+                      label="PIX"
+                      sx={{ flexGrow: 1, m: 0 }}
+                    />
+                    <QrCodeIcon color="action" sx={{ mr: 1 }} />
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      border: "1px solid",
+                      borderColor:
+                        paymentMethod === "CREDIT_CARD"
+                          ? "primary.main"
+                          : "#e5e7eb",
+                      borderRadius: 2,
+                      p: 1,
+                      backgroundColor:
+                        paymentMethod === "CREDIT_CARD"
+                          ? "#f4f6ff"
+                          : "transparent",
+                    }}
+                  >
+                    <FormControlLabel
+                      value="CREDIT_CARD"
+                      control={<Radio {...register("paymentMethod")} />}
+                      label="Cartão de Crédito"
+                      sx={{ flexGrow: 1, m: 0 }}
+                    />
+                    <CreditCardIcon color="action" sx={{ mr: 1 }} />
+                  </Box>
+                </RadioGroup>
+
+                {paymentMethod === "CREDIT_CARD" && (
+                  <Grid container spacing={2.5}>
+                    <Grid size={{ xs: 12 }}>
+                      <TextField
+                        size="small"
+                        label="Número do Cartão"
+                        {...register("cardNumber")}
+                        error={!!ccErrors.cardNumber}
+                        helperText={ccErrors.cardNumber?.message}
+                        fullWidth
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 4 }}>
+                      <TextField
+                        size="small"
+                        label="Mês (MM)"
+                        {...register("expMonth")}
+                        error={!!ccErrors.expMonth}
+                        helperText={ccErrors.expMonth?.message}
+                        fullWidth
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 4 }}>
+                      <TextField
+                        size="small"
+                        label="Ano (AAAA)"
+                        {...register("expYear")}
+                        error={!!ccErrors.expYear}
+                        helperText={ccErrors.expYear?.message}
+                        fullWidth
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 4 }}>
+                      <TextField
+                        size="small"
+                        label="CVV"
+                        {...register("cvv")}
+                        error={!!ccErrors.cvv}
+                        helperText={ccErrors.cvv?.message}
+                        fullWidth
+                      />
+                    </Grid>
+                  </Grid>
+                )}
+              </Paper>
+
+              {/* BOTÃO E FOOTER SEGURO */}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || items.length === 0}
+                  style={{
+                    width: "100%",
+                    padding: "1rem",
+                    fontSize: "1.1rem",
+                    display: "flex",
+                    gap: "0.5rem",
+                  }}
+                >
+                  {isSubmitting ? (
+                    <CircularProgress size={24} color="inherit" />
+                  ) : (
+                    <>
+                      <LockOutlinedIcon fontSize="small" />
+                      Finalizar Compra
+                    </>
+                  )}
+                </Button>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                    mt: 2,
+                    color: "text.secondary",
+                  }}
+                >
+                  <VerifiedUserOutlinedIcon fontSize="small" />
+                  <Typography variant="body2">
+                    Ambiente 100% seguro e criptografado
+                  </Typography>
+                </Box>
+              </Box>
+            </form>
+          </Grid>
+        </Grid>
+      </Container>
     </Box>
   );
 }

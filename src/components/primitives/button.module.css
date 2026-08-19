@@ -4,6 +4,7 @@
   background-color: var(--primary-color);
   font-size: 1.4rem;
   color: var(--secondary-color);
+  cursor: pointer;
 }
 
 .secondary {
@@ -14,6 +15,7 @@
   background-color: var(--neutral-color);
   color: var(--primary-font-color);
   align-items: center;
+  cursor: pointer;
 }
 
 .secondary:hover {
@@ -28,4 +30,5 @@
   border-color: #c7c4d8;
   color: var(--primary-font-color);
   align-items: center;
+  cursor: pointer;
 }

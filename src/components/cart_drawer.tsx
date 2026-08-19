@@ -6,7 +6,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Button } from "./primitives/button";
 import { useRouter } from "next/navigation";
-import { useCartStore } from "@/hooks/useCartStore";
+import { useCartStore } from "src/hooks/use_cart_store";
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("pt-BR", {
@@ -55,19 +55,34 @@ export default function CartDrawer() {
           }}
         >
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography variant="h4">Seu Carrinho</Typography>
-            <Typography variant="body1" sx={{ fontSize: "1.4rem" }}>
-              {itemsCount} {itemsCount === 1 ? "item" : "itens"} prontos para
-              finalizar a compra.
+            <Typography
+              variant="h4"
+              sx={{ fontSize: "2rem", fontWeight: "bold" }}
+            >
+              Seu Carrinho
             </Typography>
+            {items.length > 0 && (
+              <Typography variant="body1" sx={{ fontSize: "1.4rem" }}>
+                {itemsCount} {itemsCount === 1 ? "item" : "itens"} prontos para
+                finalizar a compra.
+              </Typography>
+            )}
           </Box>
           <IconButton onClick={toggleCart}>
             <CloseIcon />
           </IconButton>
         </Box>
         {items.length === 0 ? (
-          <Typography variant="body1" sx={{ fontSize: "1.4rem" }}>
-            Seu carrinho está vazio.
+          <Typography
+            variant="body1"
+            sx={{
+              fontSize: "1.4rem",
+              fontWeight: "bold",
+              textAlign: "center",
+              mt: 4,
+            }}
+          >
+            Carrinho vazio, adicione itens no carrinho para finalizar a compra!
           </Typography>
         ) : (
           <>

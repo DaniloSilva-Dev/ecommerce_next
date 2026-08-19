@@ -10,7 +10,7 @@ import Navbar from "src/components/navbar";
 import { Card } from "src/components/primitives/card";
 import type { Product } from "@/app/types/product";
 import { CardProduct } from "@/components/card_products";
-import { useCartStore } from "@/hooks/useCartStore";
+import { useCartStore } from "src/hooks/use_cart_store";
 import { Button } from "src/components/primitives/button";
 import { AddShoppingCart } from "@mui/icons-material";
 const itemsMock: Product[] = [

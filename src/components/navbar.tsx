@@ -1,6 +1,5 @@
 import SearchIcon from "@mui/icons-material/Search";
 import Link from "next/link";
-
 import CartIndicator from "./cart_indicator";
 import SearchBar from "./search_bar";
 import { Button } from "./primitives/button";
@@ -56,7 +55,9 @@ export default function Navbar() {
 
           <CartIndicator aria-label="carrinho de compra" />
 
-          <Button>Checkout</Button>
+          <Button onClick={() => (window.location.href = "/checkout")}>
+            Checkout
+          </Button>
         </div>
       </div>
     </header>
