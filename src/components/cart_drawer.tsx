@@ -1,12 +1,12 @@
 "use client";
-import { Drawer, Box, Typography, IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
+import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Button } from "./primitives/button";
+import RemoveIcon from "@mui/icons-material/Remove";
+import { Box, Drawer, IconButton, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "src/hooks/use_cart_store";
+import { Button } from "./primitives/button";
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("pt-BR", {
@@ -39,7 +39,8 @@ export default function CartDrawer() {
     <Drawer anchor="right" open={isOpen} onClose={toggleCart}>
       <Box
         sx={{
-          width: 400,
+          width: { xs: "100vw", sm: 400 },
+          maxWidth: "100vw",
           display: "flex",
           flexDirection: "column",
           height: "100%",
@@ -105,8 +106,13 @@ export default function CartDrawer() {
                   <Box
                     key={item.productId}
                     sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
+                      display: "grid",
+                      gridTemplateColumns: {
+                        xs: "64px minmax(0, 1fr) auto",
+                        sm: "80px minmax(0, 1fr) auto",
+                      },
+                      columnGap: { xs: 1, sm: 2 },
+                      rowGap: { xs: 1, sm: 0 },
                       alignItems: "center",
                       mb: 2,
                     }}
@@ -116,10 +122,10 @@ export default function CartDrawer() {
                         src={item.imageUrl}
                         alt={item.name}
                         style={{
-                          width: 80,
-                          height: 80,
+                          width: "100%",
+                          height: "auto",
+                          aspectRatio: "1",
                           objectFit: "cover",
-                          marginRight: "1rem",
                         }}
                       />
                     )}
@@ -127,29 +133,39 @@ export default function CartDrawer() {
                       sx={{
                         display: "flex",
                         flexDirection: "column",
-                        flexGrow: 1,
+                        minWidth: 0,
                       }}
                     >
                       <Typography
                         variant="body1"
-                        sx={{ fontSize: "1.4rem", fontWeight: "bold" }}
+                        sx={{
+                          fontSize: "1.4rem",
+                          fontWeight: "bold",
+                        }}
                       >
                         {item.name}
                       </Typography>
-                      <Typography variant="body2" sx={{ fontSize: "1.4rem" }}>
-                        Preço: {formatCurrency(finalPrice)}
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontSize: "1.4rem",
+                          color: "var(--primary-color)",
+                        }}
+                      >
+                        {formatCurrency(finalPrice)}
                       </Typography>
-                    </Box>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
                       <Box
                         sx={{
                           display: "flex",
-                          flexDirection: "row",
                           alignItems: "center",
-                          mr: 1,
+                          mt: 1,
+                          border: "0.1rem solid var(--tertiary-color)",
+                          borderRadius: "0.8rem",
+                          width: "fit-content",
                         }}
                       >
                         <IconButton
+                          size="small"
                           onClick={() => decreaseQuantity(item.productId)}
                         >
                           <RemoveIcon />
@@ -160,11 +176,24 @@ export default function CartDrawer() {
                         >
                           {item.quantity}
                         </Typography>
-                        <IconButton onClick={() => addItem(item)}>
+                        <IconButton size="small" onClick={() => addItem(item)}>
                           <AddIcon />
                         </IconButton>
                       </Box>
-                      <IconButton onClick={() => removeItem(item.productId)}>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gridColumn: { xs: 3, sm: "auto" },
+                        gridRow: { xs: 1, sm: "auto" },
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <IconButton
+                        size="small"
+                        onClick={() => removeItem(item.productId)}
+                      >
                         <DeleteIcon />
                       </IconButton>
                     </Box>

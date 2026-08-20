@@ -197,24 +197,45 @@ export default function Home() {
           sx={{
             mb: 4,
             display: "flex",
-            alignItems: "flex-end",
+            flexDirection: { xs: "column", md: "row" },
+            alignItems: { xs: "stretch", md: "flex-end" },
             justifyContent: "space-between",
+            gap: { xs: 2, md: 0 },
             width: "100%",
           }}
         >
-          <Box>
-            <Typography variant="h3" sx={{ mb: 1, fontWeight: "bold" }}>
-              Explore os produtos
-            </Typography>
-            <Typography
-              variant="body1"
-              color="text.secondary"
-              style={{ fontSize: "1.8rem" }}
-            >
-              Encontre periféricos, hardware e acessórios para elevar seu setup.
-            </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              alignItems: { xs: "flex-start", md: "flex-end" },
+              justifyContent: "space-between",
+              width: "100%",
+              gap: { xs: 2, md: 0 },
+            }}
+          >
+            <Box>
+              <Typography variant="h3" sx={{ mb: 1, fontWeight: "bold" }}>
+                Explore os produtos
+              </Typography>
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                style={{ fontSize: "1.8rem" }}
+              >
+                Encontre periféricos, hardware e acessórios para elevar seu
+                setup.
+              </Typography>
+            </Box>
           </Box>
-          <Box sx={{ display: "flex", gap: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              width: { xs: "100%", md: "auto" },
+              justifyContent: { xs: "flex-start", md: "flex-end" },
+            }}
+          >
             <FilterDrawer />
             <SortMenu selectedOption={sortType} onSelectOption={setSortType} />
           </Box>
