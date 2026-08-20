@@ -34,7 +34,7 @@ export default function SearchBar() {
       sx={{
         display: "flex",
         alignItems: "center",
-        border: "0.1rem solid var(--neutral-color)",
+        border: "0.1rem solid var(--tertiary-color)",
         bgcolor: "var(--neutral-color)",
         borderRadius: 4,
         px: 1,
@@ -45,6 +45,7 @@ export default function SearchBar() {
     >
       <SearchIcon sx={{ color: "text.secondary", mr: 1, fontSize: 20 }} />
       <InputBase
+        name="search bar"
         placeholder="Pesquisar produtos"
         value={searchTerm}
         onChange={handleSearchChange}

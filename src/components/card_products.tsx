@@ -3,20 +3,29 @@
 import AddShoppingCart from "@mui/icons-material/AddShoppingCart";
 import { Card } from "@/components/primitives/card";
 import { Button } from "@/components/primitives/button";
-
 import type { Product } from "@/app/types/product";
+import { Tag } from "@/components/primitives/tag";
+import { getDiscountPercentage } from "src/utils/discount";
+
 interface CardProductsProps {
   product: Product;
   onClick: (product: Product) => void;
 }
 
 export function CardProduct({ product, onClick }: CardProductsProps) {
-  // const addItem = useCartStore((state) => state.addToCart);
-  const hasDiscount = product.isOffer;
-
+  // const addItem = useCartStore((state) => state.addToCart);;
+  const discountPercentage = getDiscountPercentage(
+    product.discountedPrice ?? 0,
+    product.originalPrice,
+  );
+  const finalPrice = product.discountedPrice ?? product.originalPrice;
   return (
     <Card>
       <Card.Image src={product.imageUrl} alt={product.name} />
+      {product.isNew && <Tag variant="new">NOVO</Tag>}
+      {product.discountedPrice && (
+        <Tag variant="offer">-{discountPercentage}%</Tag>
+      )}
       <Card.Body>
         <span
           style={{
@@ -35,7 +44,7 @@ export function CardProduct({ product, onClick }: CardProductsProps) {
           {new Intl.NumberFormat("pt-BR", {
             style: "currency",
             currency: "BRL",
-          }).format(product.price / 100)}
+          }).format(finalPrice / 100)}
         </span>
       </Card.Body>
 

@@ -2,7 +2,7 @@
 
 import { Box, Typography, Button, Paper, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/dist/client/components/navigation";
+import { useRouter } from "next/navigation";
 import { CheckCircle } from "@mui/icons-material";
 
 export default function Conclusao() {
@@ -32,18 +32,20 @@ export default function Conclusao() {
         const res = await fetch(`/api/order_status?id=${order.id}`);
         const updateOrder = await res.json();
 
-        const status = updateOrder.charges?.[0]?.status;
+        // Verifica o status tanto na raiz do pedido (PIX) quanto nas cobranças (Cartão)
+        const orderStatus = updateOrder.status;
+        const chargeStatus = updateOrder.charges?.[0]?.status;
 
-        if (status === "PAID") {
-          alert("Pagamento confirmado! Obrigado pela sua compra.");
+        if (orderStatus === "PAID" || chargeStatus === "PAID") {
           setIsPaid(true);
           clearInterval(interval);
         }
       } catch (error: any) {
         console.log("Erro ao verificar status do pedido:", error);
       }
-    }, 5000); // Verifica a cada 5 segundos
-    return () => clearInterval(interval); // Limpa o intervalo ao desmontar o componente
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [order, isPix]);
 
   if (!order) {
@@ -84,36 +86,43 @@ export default function Conclusao() {
               gap: 2,
             }}
           >
-            <Typography variant="h1" color="success.main">
+            <Typography variant="h3" color="success.main">
               Pagamento Confirmado!
             </Typography>
             <Typography variant="body1">
               Obrigado pela sua compra. Seu pedido está sendo processado.
             </Typography>
-            <Typography variant="h2">Dados do Comprador</Typography>
+
+            <Typography variant="h5" sx={{ mt: 2 }}>
+              Dados do Comprador
+            </Typography>
             <Typography variant="body1">{order.customer.name}</Typography>
             <Typography variant="body1">{order.customer.email}</Typography>
-            <Typography variant="h2">Dados do Pedido</Typography>
+
+            <Typography variant="h5" sx={{ mt: 2 }}>
+              Dados do Pedido
+            </Typography>
             <Typography variant="body1">
-              ID de Transação: {order.charges?.[0].id}
+              ID de Transação: {order.charges?.[0]?.id || order.id}
             </Typography>
             <Typography variant="body1">
               Valor Total:{" "}
               {new Intl.NumberFormat("pt-BR", {
                 style: "currency",
                 currency: "BRL",
-              }).format(order.charges?.[0].amount.value / 100)}
-            </Typography>
-            <Typography variant="body1">
-              Status do Pagamento:{" "}
-              {order.charges?.[0].status === "PAID" ? "Pago" : "Pendente"}
+              }).format(
+                (order.charges?.[0]?.amount.value ||
+                  order.qr_codes?.[0]?.amount.value) / 100,
+              )}
             </Typography>
 
-            <Typography variant="h2">Produtos Comprados</Typography>
+            <Typography variant="h5" sx={{ mt: 2 }}>
+              Produtos Comprados
+            </Typography>
             {order.items.map((item: any, index: number) => (
               <Box key={index} sx={{ mb: 1 }}>
                 <Typography variant="body1">
-                  {item.name} - Quantidade: {item.quantity} - Preço Unitário:
+                  {item.name} - Qtd: {item.quantity} - Preço:{" "}
                   {new Intl.NumberFormat("pt-BR", {
                     style: "currency",
                     currency: "BRL",
@@ -122,7 +131,7 @@ export default function Conclusao() {
               </Box>
             ))}
 
-            <CheckCircle color="success" sx={{ fontSize: 200 }} />
+            <CheckCircle color="success" sx={{ fontSize: 120, mt: 2 }} />
 
             <Button
               variant="contained"
@@ -135,64 +144,64 @@ export default function Conclusao() {
         ) : (
           <>
             <Typography variant="h4" color="success.main">
-              Pedido confirmado, Aguardando Pagamento
+              Pedido confirmado!
             </Typography>
             <Typography>ID do Pedido: {order.id}</Typography>
-          </>
-        )}
 
-        {isPix && !isPaid && (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-              alignItems: "center",
-              mt: 2,
-            }}
-          >
-            <Typography variant="h6">Pagamento via PIX</Typography>
-            {pixImage && (
+            {/* SE FOR PIX E NÃO ESTIVER PAGO */}
+            {isPix && (
               <Box
-                component="img"
-                src={pixImage}
-                alt="QR Code PIX"
-                sx={{ width: 200, height: 200 }}
-              />
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
+                  alignItems: "center",
+                  mt: 2,
+                }}
+              >
+                <Typography variant="h6">
+                  Aguardando Pagamento via PIX
+                </Typography>
+                {pixImage && (
+                  <Box
+                    component="img"
+                    src={pixImage}
+                    alt="QR Code PIX"
+                    sx={{ width: 200, height: 200 }}
+                  />
+                )}
+                <TextField
+                  label="Código PIX"
+                  value={pixText}
+                  fullWidth
+                  slotProps={{ htmlInput: { readOnly: true } }}
+                  sx={{ mt: 2 }}
+                />
+                <Button
+                  variant="outlined"
+                  onClick={() => navigator.clipboard.writeText(pixText)}
+                >
+                  Copiar Código PIX
+                </Button>
+              </Box>
             )}
-            <TextField
-              label="Código PIX"
-              value={pixText}
-              fullWidth
-              slotProps={{
-                htmlInput: {
-                  readOnly: true,
-                },
-              }}
-              sx={{ mt: 2 }}
-            />
-            <Button
-              variant="outlined"
-              onClick={() => navigator.clipboard.writeText(pixText)}
-            >
-              Copiar Código PIX
-            </Button>
 
+            {/* SE NÃO FOR PIX (Cartão de Crédito) E NÃO ESTIVER PAGO */}
             {!isPix && (
-              <Typography sx={{ mt: 2 }}>
+              <Typography sx={{ mt: 2, color: "text.secondary" }}>
                 Seu pagamento via Cartão de Crédito está sendo processado. Você
-                receberá uma confirmação por e-mail em breve.
+                receberá uma confirmação na tela em instantes...
               </Typography>
             )}
 
             <Button
               variant="contained"
-              sx={{ mx: 2 }}
+              sx={{ mx: 2, mt: 4 }}
               onClick={() => router.push("/")}
             >
               Voltar para a Loja
             </Button>
-          </Box>
+          </>
         )}
       </Paper>
     </Box>

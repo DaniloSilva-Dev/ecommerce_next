@@ -1,8 +1,9 @@
 export interface Product {
   productId: string;
   name: string;
-  price: number;
+  originalPrice: number;
+  discountedPrice?: number;
   imageUrl: string;
   category: string[];
-  isOffer: boolean;
+  isNew?: boolean;
 }

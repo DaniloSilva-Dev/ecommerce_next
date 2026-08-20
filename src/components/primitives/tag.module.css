@@ -1,0 +1,22 @@
+.tag {
+  width: 4rem;
+  height: 2.3rem;
+  color: var(--secondary-color);
+  border-radius: 0.2rem;
+  padding: 0.8rem 0.4rem;
+  font-size: 1rem;
+  position: absolute;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  top: 1.6rem;
+  left: 1.6rem;
+}
+
+.new {
+  background-color: var(--primary-color);
+}
+
+.offer {
+  background-color: var(--offer-color);
+}

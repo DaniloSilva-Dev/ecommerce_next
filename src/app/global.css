@@ -4,9 +4,10 @@
   --primary-color: #3525cd;
   --secondary-color: #ffffff;
   --tertiary-color: #c7c4d8;
-  --neutral-color: #eff3f7;
+  --neutral-color: #f2f4f6;
   --font-family: "Inter", sans-serif;
   --primary-font-color: #191c1e;
+  --offer-color: #006e4b;
 }
 
 html {

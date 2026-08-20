@@ -168,7 +168,6 @@ export default function Checkout() {
             </Paper>
           </Grid>
 
-
           <Grid size={{ xs: 12, md: 8 }}>
             <form onSubmit={handleSubmit(onSubmit)}>
               {/* 1. DADOS DO COMPRADOR */}

@@ -16,33 +16,11 @@ export default function Navbar() {
           >
             E-commerce
           </Link>
-          <div className="hidden max-w-70 grow min-[900px]:block">
-            <SearchBar />
-          </div>
         </div>
-
-        {/* centro */}
-        <nav className="hidden items-center justify-center gap-8 min-[900px]:flex">
-          <button
-            type="button"
-            className="border-0 border-b-2 border-(--primary-color) bg-transparent pb-1 font-inherit text-2xl font-semibold text-(--primary-color)"
-          >
-            Loja
-          </button>
-          <button
-            type="button"
-            className="border-0 border-b-2 border-transparent bg-transparent pb-1 font-inherit text-2xl font-medium text-slate-500 hover:text-(--primary-color)"
-          >
-            Categorias
-          </button>
-          <button
-            type="button"
-            className="border-0 border-b-2 border-transparent bg-transparent pb-1 font-inherit text-2xl font-medium text-slate-500 hover:text-(--primary-color)"
-          >
-            Ofertas
-          </button>
-        </nav>
-
+        {/* Barra de busca */}
+        <div className="hidden max-w-300 grow min-[900px]:block">
+          <SearchBar />
+        </div>
         {/* lado direito */}
         <div className="flex items-center justify-end gap-3">
           <button

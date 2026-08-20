@@ -7,6 +7,7 @@
   background-color: var(--secondary-color);
   align-items: center;
   height: 100%;
+  position: relative;
 }
 
 .card:hover {

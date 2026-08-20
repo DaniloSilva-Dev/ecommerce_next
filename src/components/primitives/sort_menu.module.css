@@ -1,0 +1,32 @@
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  background-color: #f8f9fa;
+  border: 1px solid var(--tertiary-color);
+  border-radius: 0.8rem;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.content {
+  background-color: white;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  box-shadow: 0px 10px 38px -10px rgba(22, 23, 24, 0.35);
+  border: 1px solid #e5e7eb;
+}
+
+.item {
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  outline: none;
+  font-size: 1.4rem;
+}
+
+.item[data-highlighted] {
+  background-color: #3b2db0;
+  color: white;
+}
