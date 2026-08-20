@@ -45,7 +45,8 @@ export default function Checkout() {
   const ccErrors = errors as Record<string, any>;
 
   const subtotal = items.reduce(
-    (acc, item) => acc + item.price * item.quantity,
+    (acc, item) =>
+      acc + (item.discountedPrice ?? item.originalPrice) * item.quantity,
     0,
   );
 
@@ -72,52 +73,59 @@ export default function Checkout() {
               </Typography>
 
               <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                {items.map((item) => (
-                  <Box
-                    key={item.productId}
-                    sx={{ display: "flex", gap: 2, alignItems: "center" }}
-                  >
+                {items.map((item) => {
+                  const finalPrice = item.discountedPrice ?? item.originalPrice;
+
+                  return (
                     <Box
-                      sx={{
-                        width: 60,
-                        height: 60,
-                        backgroundColor: "#f3f4f6",
-                        borderRadius: 1,
-                        flexShrink: 0,
-                      }}
-                      component="img"
-                      src={item.imageUrl}
-                      alt={item.name}
-                    />
-                    <Box sx={{ flexGrow: 1 }}>
-                      <Typography
-                        variant="body2"
-                        sx={{ fontWeight: "bold", lineHeight: 1.2 }}
-                      >
-                        {item.name}
-                      </Typography>
+                      key={item.productId}
+                      sx={{ display: "flex", gap: 2, alignItems: "center" }}
+                    >
                       <Box
                         sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          mt: 1,
+                          width: 60,
+                          height: 60,
+                          backgroundColor: "#f3f4f6",
+                          borderRadius: 1,
+                          flexShrink: 0,
                         }}
-                      >
-                        <Typography variant="caption" color="text.secondary">
-                          Qtd: {item.quantity}
+                        component="img"
+                        src={item.imageUrl}
+                        alt={item.name}
+                      />
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Typography
+                          variant="body2"
+                          sx={{ fontWeight: "bold", lineHeight: 1.2 }}
+                        >
+                          {item.name}
                         </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                          {formatCurrency(item.price)}
-                        </Typography>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            mt: 1,
+                          }}
+                        >
+                          <Typography variant="caption" color="text.secondary">
+                            Qtd: {item.quantity}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontWeight: "bold" }}
+                          >
+                            {formatCurrency(finalPrice)}
+                          </Typography>
+                        </Box>
                       </Box>
+                      <DeleteOutlineIcon
+                        fontSize="small"
+                        sx={{ color: "text.secondary", cursor: "pointer" }}
+                      />
                     </Box>
-                    <DeleteOutlineIcon
-                      fontSize="small"
-                      sx={{ color: "text.secondary", cursor: "pointer" }}
-                    />
-                  </Box>
-                ))}
+                  );
+                })}
               </Box>
 
               <Divider sx={{ my: 3 }} />
@@ -198,6 +206,7 @@ export default function Checkout() {
                       error={!!errors.name}
                       helperText={errors.name?.message}
                       fullWidth
+                      sx={{ bgcolor: "var(--neutral-color)" }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 6 }}>
@@ -208,6 +217,7 @@ export default function Checkout() {
                       error={!!errors.email}
                       helperText={errors.email?.message}
                       fullWidth
+                      sx={{ bgcolor: "var(--neutral-color)" }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 6 }}>
@@ -218,6 +228,7 @@ export default function Checkout() {
                       error={!!errors.tax_id}
                       helperText={errors.tax_id?.message}
                       fullWidth
+                      sx={{ bgcolor: "var(--neutral-color)" }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 6 }}>
@@ -228,6 +239,7 @@ export default function Checkout() {
                       error={!!errors.phone}
                       helperText={errors.phone?.message}
                       fullWidth
+                      sx={{ bgcolor: "var(--neutral-color)" }}
                     />
                   </Grid>
                 </Grid>
@@ -262,6 +274,7 @@ export default function Checkout() {
                       error={!!errors.cep}
                       helperText={errors.cep?.message}
                       fullWidth
+                      sx={{ bgcolor: "var(--neutral-color)" }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 8 }}>
@@ -272,6 +285,7 @@ export default function Checkout() {
                       error={!!errors.logradouro}
                       helperText={errors.logradouro?.message}
                       fullWidth
+                      sx={{ bgcolor: "var(--neutral-color)" }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 4 }}>
@@ -282,6 +296,7 @@ export default function Checkout() {
                       error={!!errors.numero}
                       helperText={errors.numero?.message}
                       fullWidth
+                      sx={{ bgcolor: "var(--neutral-color)" }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 8 }}>
@@ -290,6 +305,7 @@ export default function Checkout() {
                       label="Complemento (Opcional)"
                       {...register("complemento")}
                       fullWidth
+                      sx={{ bgcolor: "var(--neutral-color)" }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 5 }}>
@@ -300,6 +316,7 @@ export default function Checkout() {
                       error={!!errors.bairro}
                       helperText={errors.bairro?.message}
                       fullWidth
+                      sx={{ bgcolor: "var(--neutral-color)" }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 5 }}>
@@ -310,6 +327,7 @@ export default function Checkout() {
                       error={!!errors.cidade}
                       helperText={errors.cidade?.message}
                       fullWidth
+                      sx={{ bgcolor: "var(--neutral-color)" }}
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 2 }}>
@@ -320,6 +338,7 @@ export default function Checkout() {
                       error={!!errors.uf}
                       helperText={errors.uf?.message}
                       fullWidth
+                      sx={{ bgcolor: "var(--neutral-color)" }}
                     />
                   </Grid>
                 </Grid>
@@ -403,6 +422,7 @@ export default function Checkout() {
                         error={!!ccErrors.cardNumber}
                         helperText={ccErrors.cardNumber?.message}
                         fullWidth
+                        sx={{ bgcolor: "var(--neutral-color)" }}
                       />
                     </Grid>
                     <Grid size={{ xs: 4 }}>
@@ -413,6 +433,7 @@ export default function Checkout() {
                         error={!!ccErrors.expMonth}
                         helperText={ccErrors.expMonth?.message}
                         fullWidth
+                        sx={{ bgcolor: "var(--neutral-color)" }}
                       />
                     </Grid>
                     <Grid size={{ xs: 4 }}>
@@ -423,6 +444,7 @@ export default function Checkout() {
                         error={!!ccErrors.expYear}
                         helperText={ccErrors.expYear?.message}
                         fullWidth
+                        sx={{ bgcolor: "var(--neutral-color)" }}
                       />
                     </Grid>
                     <Grid size={{ xs: 4 }}>
@@ -433,6 +455,7 @@ export default function Checkout() {
                         error={!!ccErrors.cvv}
                         helperText={ccErrors.cvv?.message}
                         fullWidth
+                        sx={{ bgcolor: "var(--neutral-color)" }}
                       />
                     </Grid>
                   </Grid>
@@ -453,16 +476,18 @@ export default function Checkout() {
                   style={{
                     width: "100%",
                     padding: "1rem",
-                    fontSize: "1.1rem",
+                    fontSize: "1.6rem",
                     display: "flex",
                     gap: "0.5rem",
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                 >
                   {isSubmitting ? (
                     <CircularProgress size={24} color="inherit" />
                   ) : (
                     <>
-                      <LockOutlinedIcon fontSize="small" />
+                      <LockOutlinedIcon fontSize="medium" />
                       Finalizar Compra
                     </>
                   )}
@@ -477,8 +502,8 @@ export default function Checkout() {
                     color: "text.secondary",
                   }}
                 >
-                  <VerifiedUserOutlinedIcon fontSize="small" />
-                  <Typography variant="body2">
+                  <VerifiedUserOutlinedIcon fontSize="large" />
+                  <Typography variant="body2" sx={{ fontSize: "1.4rem" }}>
                     Ambiente 100% seguro e criptografado
                   </Typography>
                 </Box>

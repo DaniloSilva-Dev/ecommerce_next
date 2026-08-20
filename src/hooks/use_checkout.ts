@@ -89,7 +89,8 @@ export function useCheckout() {
     setIsSubmitting(true);
 
     const subtotal = items.reduce(
-      (acc, item) => acc + item.price * item.quantity,
+      (acc, item) =>
+        acc + (item.discountedPrice ?? item.originalPrice) * item.quantity,
       0,
     );
     const cleanPhone = data.phone.replace(/\D/g, "");
@@ -124,12 +125,16 @@ export function useCheckout() {
       shipping: {
         address: address,
       },
-      items: items.map((item) => ({
-        reference_id: String(item.productId),
-        name: item.name,
-        quantity: item.quantity,
-        unit_amount: item.price,
-      })),
+      items: items.map((item) => {
+        const finalPrice = item.discountedPrice ?? item.originalPrice;
+
+        return {
+          reference_id: String(item.productId),
+          name: item.name,
+          quantity: item.quantity,
+          unit_amount: finalPrice,
+        };
+      }),
     };
 
     if (data.paymentMethod === "PIX") {
@@ -152,7 +157,16 @@ export function useCheckout() {
               holder: {
                 name: data.name,
                 tax_id: data.tax_id.replace(/\D/g, ""),
-                address: address,
+                address: {
+                  street: data.logradouro,
+                  number: data.numero,
+                  locality: data.bairro,
+                  city: data.cidade,
+                  region: data.uf,
+                  region_code: data.uf,
+                  country: "BRA",
+                  postal_code: data.cep.replace(/\D/g, ""),
+                },
               },
             },
           },

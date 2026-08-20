@@ -28,7 +28,8 @@ export default function CartDrawer() {
   } = useCartStore();
 
   const subtotal = items.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total, item) =>
+      total + (item.discountedPrice ?? item.originalPrice) * item.quantity,
     0,
   );
 
@@ -97,75 +98,79 @@ export default function CartDrawer() {
                 borderBottom: "0.1rem solid #C7C4D8",
               }}
             >
-              {items.map((item) => (
-                <Box
-                  key={item.productId}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    mb: 2,
-                  }}
-                >
-                  {item.imageUrl && (
-                    <img
-                      src={item.imageUrl}
-                      alt={item.name}
-                      style={{
-                        width: 80,
-                        height: 80,
-                        objectFit: "cover",
-                        marginRight: "1rem",
-                      }}
-                    />
-                  )}
+              {items.map((item) => {
+                const finalPrice = item.discountedPrice ?? item.originalPrice;
+
+                return (
                   <Box
+                    key={item.productId}
                     sx={{
                       display: "flex",
-                      flexDirection: "column",
-                      flexGrow: 1,
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      mb: 2,
                     }}
                   >
-                    <Typography
-                      variant="body1"
-                      sx={{ fontSize: "1.4rem", fontWeight: "bold" }}
-                    >
-                      {item.name}
-                    </Typography>
-                    <Typography variant="body2" sx={{ fontSize: "1.4rem" }}>
-                      Preço: {formatCurrency(item.price)}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    {item.imageUrl && (
+                      <img
+                        src={item.imageUrl}
+                        alt={item.name}
+                        style={{
+                          width: 80,
+                          height: 80,
+                          objectFit: "cover",
+                          marginRight: "1rem",
+                        }}
+                      />
+                    )}
                     <Box
                       sx={{
                         display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        mr: 1,
+                        flexDirection: "column",
+                        flexGrow: 1,
                       }}
                     >
-                      <IconButton
-                        onClick={() => decreaseQuantity(item.productId)}
-                      >
-                        <RemoveIcon />
-                      </IconButton>
                       <Typography
-                        variant="body2"
+                        variant="body1"
                         sx={{ fontSize: "1.4rem", fontWeight: "bold" }}
                       >
-                        {item.quantity}
+                        {item.name}
                       </Typography>
-                      <IconButton onClick={() => addItem(item)}>
-                        <AddIcon />
+                      <Typography variant="body2" sx={{ fontSize: "1.4rem" }}>
+                        Preço: {formatCurrency(finalPrice)}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          mr: 1,
+                        }}
+                      >
+                        <IconButton
+                          onClick={() => decreaseQuantity(item.productId)}
+                        >
+                          <RemoveIcon />
+                        </IconButton>
+                        <Typography
+                          variant="body2"
+                          sx={{ fontSize: "1.4rem", fontWeight: "bold" }}
+                        >
+                          {item.quantity}
+                        </Typography>
+                        <IconButton onClick={() => addItem(item)}>
+                          <AddIcon />
+                        </IconButton>
+                      </Box>
+                      <IconButton onClick={() => removeItem(item.productId)}>
+                        <DeleteIcon />
                       </IconButton>
                     </Box>
-                    <IconButton onClick={() => removeItem(item.productId)}>
-                      <DeleteIcon />
-                    </IconButton>
                   </Box>
-                </Box>
-              ))}
+                );
+              })}
             </Box>
 
             <Box
