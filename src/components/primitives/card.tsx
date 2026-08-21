@@ -1,6 +1,7 @@
 import cx from "classnames";
 import styles from "./card.module.css";
 import Image from "next/image";
+import { useState } from "react";
 
 export interface CardProps
   extends React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>> {
@@ -39,13 +40,22 @@ function CardBody({
 }
 
 function CardImage({ src, alt, className, ...props }: CardImageProps) {
+  const [isLandscape, setIsLandscape] = useState(false);
+
   return (
     <div className={cx(styles.cardImage, className)} {...props}>
       <Image
         src={src}
         alt={alt}
         fill
-        className="object-contain"
+        className={cx(styles.cardImageContent, {
+          [styles.cardImageContentLandscape]: isLandscape,
+        })}
+        onLoad={(event) => {
+          setIsLandscape(
+            event.currentTarget.naturalWidth > event.currentTarget.naturalHeight,
+          );
+        }}
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       />
     </div>
