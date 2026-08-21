@@ -215,6 +215,8 @@ export default function Home() {
           <Box
             sx={{
               display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              alignItems: { xs: "stretch", md: "center" },
               gap: 2,
               width: { xs: "100%", md: "auto" },
               justifyContent: { xs: "flex-start", md: "flex-end" },

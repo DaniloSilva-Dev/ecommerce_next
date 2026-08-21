@@ -200,7 +200,18 @@ export function useCheckout() {
         throw new Error("Falha na requisição");
       }
 
-      sessionStorage.setItem("lastOrder", JSON.stringify(responseData));
+      const itemsByReference = new Map(
+        items.map((item) => [String(item.productId), item]),
+      );
+      const orderWithImages = {
+        ...responseData,
+        items: responseData.items.map((item: any) => ({
+          ...item,
+          imageUrl: itemsByReference.get(item.reference_id)?.imageUrl,
+        })),
+      };
+
+      sessionStorage.setItem("lastOrder", JSON.stringify(orderWithImages));
       clearCart();
       router.push("/conclusao");
     } catch (error) {

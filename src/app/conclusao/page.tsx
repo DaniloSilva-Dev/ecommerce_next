@@ -35,7 +35,7 @@ export default function Conclusao() {
   const pixText = isPix ? order.qr_codes[0].text : "";
   const pixImage = isPix
     ? order.qr_codes[0].links.find((link: any) => link.rel === "QRCODE.PNG")
-        ?.href
+      ?.href
     : "";
 
   useEffect(() => {
@@ -334,7 +334,11 @@ export default function Conclusao() {
                           bgcolor: "var(--neutral-color)",
                           borderRadius: 2,
                           flexShrink: 0,
+                          objectFit: "contain",
                         }}
+                        component={item.imageUrl ? "img" : "div"}
+                        src={item.imageUrl}
+                        alt={item.name}
                       />
                       <Box sx={{ textAlign: "left", flexGrow: 1 }}>
                         <Typography
