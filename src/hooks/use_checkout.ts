@@ -44,6 +44,7 @@ export function useCheckout() {
   const { cartItems: items, clearCart } = useCartStore();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFetchingCep, setIsFetchingCep] = useState(false);
 
   const form = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
@@ -61,6 +62,8 @@ export function useCheckout() {
     const cepLimpo = event.target.value.replace(/\D/g, "");
     if (cepLimpo.length !== 8) return;
 
+    const loadingStartedAt = Date.now();
+    setIsFetchingCep(true);
     try {
       const response = await fetch(
         `https://viacep.com.br/ws/${cepLimpo}/json/`,
@@ -68,14 +71,22 @@ export function useCheckout() {
       const data = await response.json();
 
       if (!data.erro) {
-        setValue("logradouro", data.logradouro);
-        setValue("bairro", data.bairro);
-        setValue("cidade", data.localidade);
-        setValue("uf", data.uf);
+        setValue("logradouro", data.logradouro, { shouldValidate: true });
+        setValue("bairro", data.bairro, { shouldValidate: true });
+        setValue("cidade", data.localidade, { shouldValidate: true });
+        setValue("uf", data.uf, { shouldValidate: true });
         setFocus("numero");
       }
     } catch (error) {
       console.error("Erro ao buscar CEP", error);
+    } finally {
+      const remainingLoadingTime = 450 - (Date.now() - loadingStartedAt);
+      if (remainingLoadingTime > 0) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, remainingLoadingTime),
+        );
+      }
+      setIsFetchingCep(false);
     }
   };
 
@@ -205,6 +216,7 @@ export function useCheckout() {
     onSubmit,
     buscarCep,
     isSubmitting,
+    isFetchingCep,
     paymentMethod,
     items,
   };

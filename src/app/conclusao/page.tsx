@@ -16,12 +16,12 @@ export default function Conclusao() {
       setOrder(JSON.parse(orderData));
     }
   }, []);
-
+  const chargeId = order?.charges?.[0]?.id || order?.id;
   const isPix = Boolean(order?.qr_codes?.length > 0);
   const pixText = isPix ? order.qr_codes[0].text : "";
   const pixImage = isPix
     ? order.qr_codes[0].links.find((link: any) => link.rel === "QRCODE.PNG")
-        ?.href
+      ?.href
     : "";
 
   useEffect(() => {
@@ -66,16 +66,26 @@ export default function Conclusao() {
   }
 
   return (
-    <Box sx={{ maxWidth: 600, mx: "auto", p: 4, textAlign: "center" }}>
-      <Paper
-        sx={{
-          p: 4,
-          display: "flex",
-          flexDirection: "column",
-          gap: 3,
-          alignItems: "center",
+    <Box sx={{ minHeight: "100vh", textAlign: "center" }}>
+      <header
+        style={{
+          marginBottom: "2rem",
+          width: "100%",
         }}
       >
+        <span
+          style={{
+            color: "var(--primary-color)",
+            fontWeight: "bold",
+            fontSize: "4.5rem",
+            textAlign: "center",
+          }}
+        >
+          Ecommerce
+        </span>
+      </header>
+
+      <Box sx={{ px: { xs: 2, sm: 4 } }}>
         {isPaid ? (
           <Box
             sx={{
@@ -86,53 +96,57 @@ export default function Conclusao() {
               gap: 2,
             }}
           >
+            <CheckCircle color="success" sx={{ fontSize: 120, mt: 2 }} />
             <Typography variant="h3" color="success.main">
-              Pagamento Confirmado!
+              Pedido Realizado com Sucesso!
             </Typography>
             <Typography variant="body1">
-              Obrigado pela sua compra. Seu pedido está sendo processado.
+              Obrigado por sua compra. Seu pedido foi confirmado e em breve será preparado para envio.
+            </Typography>
+            <Typography variant="body1" sx={{ bgcolor: "var(--neutral-color)", border: "0.1rem solid var(--tertiary-color)", borderRadius: "0.8rem", p: 0.3 }}>
+              ID da cobrança: <span style={{ color: "var(--primary-color)" }}>{chargeId}</span>
             </Typography>
 
-            <Typography variant="h5" sx={{ mt: 2 }}>
-              Dados do Comprador
-            </Typography>
-            <Typography variant="body1">{order.customer.name}</Typography>
-            <Typography variant="body1">{order.customer.email}</Typography>
+            <Box sx={{ mt: 2, width: "100%", maxWidth: 600, textAlign: "center", bgcolor: "var(--secondary-color)", border: "0.1rem solid var(--tertiary-color)", borderRadius: "0.8rem", p: 2 }}>
+              <Typography variant="h5" sx={{ mt: 2 }}>
+                Dados da Entrega
+              </Typography>
+              <Typography variant="body1">{order.customer.name}</Typography>
+              <Typography variant="body1">{order.shipping_address?.street}</Typography>
+            </Box>
 
-            <Typography variant="h5" sx={{ mt: 2 }}>
-              Dados do Pedido
-            </Typography>
-            <Typography variant="body1">
-              ID de Transação: {order.charges?.[0]?.id || order.id}
-            </Typography>
-            <Typography variant="body1">
-              Valor Total:{" "}
-              {new Intl.NumberFormat("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              }).format(
-                (order.charges?.[0]?.amount.value ||
-                  order.qr_codes?.[0]?.amount.value) / 100,
-              )}
-            </Typography>
-
-            <Typography variant="h5" sx={{ mt: 2 }}>
-              Produtos Comprados
-            </Typography>
-            {order.items.map((item: any, index: number) => (
-              <Box key={index} sx={{ mb: 1 }}>
-                <Typography variant="body1">
-                  {item.name} - Qtd: {item.quantity} - Preço:{" "}
+            <Box sx={{ mt: 2, width: "100%", maxWidth: 600, textAlign: "center", bgcolor: "var(--secondary-color)", border: "0.1rem solid var(--tertiary-color)", borderRadius: "0.8rem", p: 2 }}>
+              <Typography variant="h5" sx={{ mt: 2 }}>
+                Resumo do Pedido
+              </Typography>
+              <Typography variant="body1">
+                Total Pago:{" "}
+                <span style={{ color: "var(--primary-color)", fontWeight: "bold" }}>
                   {new Intl.NumberFormat("pt-BR", {
                     style: "currency",
                     currency: "BRL",
-                  }).format(item.unit_amount / 100)}
-                </Typography>
-              </Box>
-            ))}
+                  }).format(
+                    (order.charges?.[0]?.amount.value ||
+                      order.qr_codes?.[0]?.amount.value) / 100,
+                  )}
+                </span>
+              </Typography>
 
-            <CheckCircle color="success" sx={{ fontSize: 120, mt: 2 }} />
-
+              <Typography variant="h5" sx={{ mt: 2 }}>
+                Produtos Comprados
+              </Typography>
+              {order.items.map((item: any, index: number) => (
+                <Box key={index} sx={{ mb: 1 }}>
+                  <Typography variant="body1">
+                    {item.name} - Qtd: {item.quantity} - Preço:{" "}
+                    {new Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    }).format(item.unit_amount / 100)}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
             <Button
               variant="contained"
               sx={{ mt: 2 }}
@@ -203,7 +217,7 @@ export default function Conclusao() {
             </Button>
           </>
         )}
-      </Paper>
+      </Box>
     </Box>
   );
 }

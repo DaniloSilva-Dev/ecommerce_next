@@ -12,6 +12,7 @@ import {
   Paper,
   Divider,
   Container,
+  InputAdornment,
 } from "@mui/material";
 import PersonOutlineIcon from "@mui/icons-material/Person";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
@@ -24,6 +25,8 @@ import DeleteOutlineIcon from "@mui/icons-material/Delete";
 
 import { useCheckout } from "@/hooks/use_checkout";
 import { Button } from "@/components/primitives/button";
+import { QuantityControl } from "src/components/primitives/quantity_control";
+import { useCartStore } from "src/hooks/use_cart_store";
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("pt-BR", {
@@ -33,14 +36,23 @@ const formatCurrency = (amount: number) => {
 };
 
 export default function Checkout() {
-  const { form, onSubmit, buscarCep, isSubmitting, paymentMethod, items } =
-    useCheckout();
+  const {
+    form,
+    onSubmit,
+    buscarCep,
+    isSubmitting,
+    isFetchingCep,
+    paymentMethod,
+    items,
+  } = useCheckout();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = form;
+
+  const { decreaseQuantity, addToCart: addItem } = useCartStore();
 
   const ccErrors = errors as Record<string, any>;
 
@@ -51,11 +63,28 @@ export default function Checkout() {
   );
 
   return (
-    <Box sx={{ backgroundColor: "#f9fafb", minHeight: "100vh", pb: 8, pt: 4 }}>
-      <Container maxWidth="lg">
+    <Box sx={{ minHeight: "100vh", p: { xs: 0, sm: 2 } }}>
+      <header
+        style={{
+          borderBottom: "0.1rem solid var(--tertiary-color)",
+          marginBottom: "2rem",
+        }}
+      >
+        <h1
+          style={{
+            color: "var(--primary-color)",
+            fontWeight: "bold",
+            fontSize: "4.5rem",
+            textAlign: "center",
+          }}
+        >
+          Ecommerce
+        </h1>
+      </header>
+      <Container maxWidth="lg" sx={{ px: { xs: 1, sm: 2 } }}>
         <Typography
-          variant="h5"
-          component="h1"
+          variant="h4"
+          component="h2"
           sx={{ fontWeight: "bold", mb: 4 }}
           gutterBottom
         >
@@ -68,7 +97,14 @@ export default function Checkout() {
               variant="outlined"
               sx={{ p: 3, borderRadius: 2, borderColor: "#e5e7eb" }}
             >
-              <Typography variant="h6" sx={{ fontWeight: "bold", mb: 3 }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: "bold",
+                  mb: 3,
+                  fontSize: { xs: "1.5rem", sm: "1.4rem" },
+                }}
+              >
                 Resumo do Pedido
               </Typography>
 
@@ -96,7 +132,11 @@ export default function Checkout() {
                       <Box sx={{ flexGrow: 1 }}>
                         <Typography
                           variant="body2"
-                          sx={{ fontWeight: "bold", lineHeight: 1.2 }}
+                          sx={{
+                            fontWeight: "bold",
+                            fontSize: { xs: "1.2rem", sm: "1.4rem" },
+                            lineHeight: 1.2,
+                          }}
                         >
                           {item.name}
                         </Typography>
@@ -108,12 +148,17 @@ export default function Checkout() {
                             mt: 1,
                           }}
                         >
-                          <Typography variant="caption" color="text.secondary">
-                            Qtd: {item.quantity}
-                          </Typography>
+                          <QuantityControl
+                            quantity={item.quantity}
+                            onDecrease={() => decreaseQuantity(item.productId)}
+                            onIncrease={() => addItem(item)}
+                          />
                           <Typography
                             variant="body2"
-                            sx={{ fontWeight: "bold" }}
+                            sx={{
+                              fontWeight: "bold",
+                              fontSize: { xs: "1.5rem", sm: "1.4rem" },
+                            }}
                           >
                             {formatCurrency(finalPrice)}
                           </Typography>
@@ -132,20 +177,37 @@ export default function Checkout() {
 
               <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ fontSize: { xs: "1.5rem", sm: "1.4rem" } }}
+                  >
                     Subtotal
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: "medium" }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontWeight: "medium",
+                      fontSize: { xs: "1.5rem", sm: "1.4rem" },
+                    }}
+                  >
                     {formatCurrency(subtotal)}
                   </Typography>
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ fontSize: { xs: "1.5rem", sm: "1.4rem" } }}
+                  >
                     Frete
                   </Typography>
                   <Typography
                     variant="body2"
-                    sx={{ fontWeight: "bold" }}
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: { xs: "1.5rem", sm: "1.4rem" },
+                    }}
                     color="primary"
                   >
                     GRÁTIS
@@ -269,11 +331,11 @@ export default function Checkout() {
                     <TextField
                       size="small"
                       label="CEP"
-                      {...register("cep")}
-                      onBlur={buscarCep}
+                      {...register("cep", { onBlur: buscarCep })}
                       error={!!errors.cep}
                       helperText={errors.cep?.message}
                       fullWidth
+                      slotProps={{ inputLabel: { shrink: true } }}
                       sx={{ bgcolor: "var(--neutral-color)" }}
                     />
                   </Grid>
@@ -285,6 +347,16 @@ export default function Checkout() {
                       error={!!errors.logradouro}
                       helperText={errors.logradouro?.message}
                       fullWidth
+                      slotProps={{
+                        input: {
+                          endAdornment: isFetchingCep ? (
+                            <InputAdornment position="end">
+                              <CircularProgress size={18} />
+                            </InputAdornment>
+                          ) : undefined,
+                        },
+                        inputLabel: { shrink: true },
+                      }}
                       sx={{ bgcolor: "var(--neutral-color)" }}
                     />
                   </Grid>
@@ -316,6 +388,16 @@ export default function Checkout() {
                       error={!!errors.bairro}
                       helperText={errors.bairro?.message}
                       fullWidth
+                      slotProps={{
+                        input: {
+                          endAdornment: isFetchingCep ? (
+                            <InputAdornment position="end">
+                              <CircularProgress size={18} />
+                            </InputAdornment>
+                          ) : undefined,
+                        },
+                        inputLabel: { shrink: true },
+                      }}
                       sx={{ bgcolor: "var(--neutral-color)" }}
                     />
                   </Grid>
@@ -327,6 +409,16 @@ export default function Checkout() {
                       error={!!errors.cidade}
                       helperText={errors.cidade?.message}
                       fullWidth
+                      slotProps={{
+                        input: {
+                          endAdornment: isFetchingCep ? (
+                            <InputAdornment position="end">
+                              <CircularProgress size={18} />
+                            </InputAdornment>
+                          ) : undefined,
+                        },
+                        inputLabel: { shrink: true },
+                      }}
                       sx={{ bgcolor: "var(--neutral-color)" }}
                     />
                   </Grid>
@@ -338,6 +430,16 @@ export default function Checkout() {
                       error={!!errors.uf}
                       helperText={errors.uf?.message}
                       fullWidth
+                      slotProps={{
+                        input: {
+                          endAdornment: isFetchingCep ? (
+                            <InputAdornment position="end">
+                              <CircularProgress size={18} />
+                            </InputAdornment>
+                          ) : undefined,
+                        },
+                        inputLabel: { shrink: true },
+                      }}
                       sx={{ bgcolor: "var(--neutral-color)" }}
                     />
                   </Grid>

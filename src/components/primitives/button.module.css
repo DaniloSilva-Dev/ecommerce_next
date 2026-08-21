@@ -7,6 +7,13 @@
   cursor: pointer;
 }
 
+.primary:disabled {
+  background-color: #9ca3af;
+  color: #e5e7eb;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
 .secondary {
   width: 100%;
   border-radius: 0.8rem;

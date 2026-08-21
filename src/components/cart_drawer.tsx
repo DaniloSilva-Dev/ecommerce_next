@@ -1,9 +1,8 @@
 "use client";
-import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
-import RemoveIcon from "@mui/icons-material/Remove";
 import { Box, Drawer, IconButton, Typography } from "@mui/material";
+import { QuantityControl } from "./primitives/quantity_control";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "src/hooks/use_cart_store";
 import { Button } from "./primitives/button";
@@ -154,32 +153,11 @@ export default function CartDrawer() {
                       >
                         {formatCurrency(finalPrice)}
                       </Typography>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          mt: 1,
-                          border: "0.1rem solid var(--tertiary-color)",
-                          borderRadius: "0.8rem",
-                          width: "fit-content",
-                        }}
-                      >
-                        <IconButton
-                          size="small"
-                          onClick={() => decreaseQuantity(item.productId)}
-                        >
-                          <RemoveIcon />
-                        </IconButton>
-                        <Typography
-                          variant="body2"
-                          sx={{ fontSize: "1.4rem", fontWeight: "bold" }}
-                        >
-                          {item.quantity}
-                        </Typography>
-                        <IconButton size="small" onClick={() => addItem(item)}>
-                          <AddIcon />
-                        </IconButton>
-                      </Box>
+                      <QuantityControl
+                        quantity={item.quantity}
+                        onDecrease={() => decreaseQuantity(item.productId)}
+                        onIncrease={() => addItem(item)}
+                      />
                     </Box>
                     <Box
                       sx={{
