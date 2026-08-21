@@ -21,7 +21,7 @@ export function FilterDrawer() {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="flex cursor-pointer items-center gap-2 px-4! py-2! bg-[#f8f9fa] border border-(--tertiary-color) rounded-[0.8rem] text-[1.4rem] text-gray-800 transition-colors hover:bg-gray-200"
+        className="flex min-h-12 min-w-36 cursor-pointer items-center justify-center gap-2 px-6! py-2! bg-var(--neutral-color) border border-(--tertiary-color) rounded-[0.6rem] text-[1.4rem] text-gray-800 transition-colors hover:bg-gray-200"
       >
         <TuneIcon fontSize="large" />
         Filtros

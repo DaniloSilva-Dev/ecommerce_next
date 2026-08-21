@@ -21,8 +21,7 @@ const itemsMock: Product[] = [
     productId: "1",
     name: "Headset Gamer HyperX Cloud III",
     originalPrice: 89990,
-    imageUrl:
-      "https://images.unsplash.com/photo-1599669454699-248893623440?w=800&q=80",
+    imageUrl: "/headset.jfif",
     category: ["gamer", "periféricos"],
     isNew: true,
   },
@@ -30,8 +29,7 @@ const itemsMock: Product[] = [
     productId: "2",
     name: "Teclado Mecânico RGB 60%",
     originalPrice: 45990,
-    imageUrl:
-      "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800&q=80",
+    imageUrl: "/teclado_60.jfif",
     category: ["gamer", "periféricos"],
   },
   {
@@ -39,8 +37,7 @@ const itemsMock: Product[] = [
     name: "Mouse Gamer RGB 12.000 DPI",
     originalPrice: 22990,
     discountedPrice: 18990,
-    imageUrl:
-      "https://images.unsplash.com/photo-1527814050087-3793815479db?w=800&q=80",
+    imageUrl: "/mouse_gamer.jfif",
     category: ["gamer", "periféricos"],
   },
   {
@@ -48,88 +45,77 @@ const itemsMock: Product[] = [
     name: 'Monitor Gamer 27" 180 Hz',
     originalPrice: 169990,
     discountedPrice: 149990,
-    imageUrl:
-      "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800&q=80",
+    imageUrl: "/monitor.jpg",
     category: ["gamer", "monitores"],
   },
   {
     productId: "5",
     name: "Cadeira Gamer Ergonômica",
     originalPrice: 129990,
-    imageUrl:
-      "https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=800&q=80",
+    imageUrl: "/cadeira_ergonomica.jfif",
     category: ["gamer", "setup"],
   },
   {
     productId: "6",
     name: "Placa de Vídeo GeForce RTX 4060",
     originalPrice: 219990,
-    imageUrl:
-      "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=800&q=80",
+    imageUrl: "/placa_de_video.jfif",
     category: ["hardware", "gamer"],
   },
   {
     productId: "7",
     name: "Controle Sem Fio para PC e Console",
     originalPrice: 34990,
-    imageUrl:
-      "https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?w=800&q=80",
+    imageUrl: "/controle.jfif",
     category: ["gamer", "acessórios"],
   },
   {
     productId: "8",
     name: "Microfone USB para Streaming",
     originalPrice: 59990,
-    imageUrl:
-      "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800&q=80",
+    imageUrl: "/microfone.jfif",
     category: ["gamer", "streaming"],
   },
   {
     productId: "9",
     name: "Webcam Full HD com Microfone",
     originalPrice: 27990,
-    imageUrl:
-      "https://images.unsplash.com/photo-1587826080692-f439cd0b70da?w=800&q=80",
+    imageUrl: "/webcam.jpg",
     category: ["streaming", "acessórios"],
   },
   {
     productId: "10",
     name: "SSD NVMe 1 TB PCIe 4.0",
     originalPrice: 57990,
-    imageUrl:
-      "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=800&q=80",
+    imageUrl: "/ssd.jpg",
     category: ["hardware", "componentes"],
   },
   {
     productId: "11",
     name: "Memória RAM 16 GB DDR5",
     originalPrice: 49990,
-    imageUrl:
-      "https://images.unsplash.com/photo-1562976540-1502c2145186?w=800&q=80",
+    imageUrl: "/memoria_ram.jfif",
     category: ["hardware", "componentes"],
   },
   {
     productId: "12",
     name: "Mousepad Desk Mat Extra Grande",
     originalPrice: 12990,
-    imageUrl:
-      "https://images.unsplash.com/photo-1616628182501-4e7b4c6b6f43?w=800&q=80",
+    imageUrl: "/mousepad.jpg",
     category: ["gamer", "setup"],
   },
   {
     productId: "13",
     name: "Ring Light LED para Lives",
     originalPrice: 15990,
-    imageUrl:
-      "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800&q=80",
+    imageUrl: "/ring_light.jpg",
     category: ["streaming", "setup"],
   },
   {
     productId: "14",
     name: "Soundbar Compacta Bluetooth",
     originalPrice: 39990,
-    imageUrl:
-      "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=800&q=80",
+    imageUrl: "/soundbar.jfif",
     category: ["áudio", "acessórios"],
   },
   {
@@ -137,16 +123,14 @@ const itemsMock: Product[] = [
     name: 'Notebook Gamer 15" RTX 4050',
     originalPrice: 649990,
     discountedPrice: 599990,
-    imageUrl:
-      "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=800&q=80",
+    imageUrl: "/notebook_gamer.jpg",
     category: ["gamer", "hardware"],
   },
   {
     productId: "16",
     name: "Fone Bluetooth com Cancelamento de Ruído",
     originalPrice: 79990,
-    imageUrl:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80",
+    imageUrl: "/fone_bluetooth.jfif",
     category: ["áudio", "acessórios"],
   },
 ];

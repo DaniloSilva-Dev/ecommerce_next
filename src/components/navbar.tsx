@@ -14,7 +14,6 @@ export default function Navbar() {
   return (
     <header className="w-full border-b border-[#e0e0e0] bg-[--secondary-color]">
       <div className="relative flex h-20 w-full min-w-0 items-center justify-between gap-2 px-4! sm:px-6! lg:px-16!">
-        
         {isMobileSearchOpen && (
           <div className="absolute inset-0 z-50 flex h-full w-full items-center gap-2 bg-[--secondary-color] px-4! sm:px-6! min-[900px]:hidden">
             <div className="flex-1">
@@ -31,7 +30,9 @@ export default function Navbar() {
         )}
 
         {/* lado esquerdo  */}
-        <div className={`min-w-0 flex-1 ${isMobileSearchOpen ? "hidden min-[900px]:block" : ""}`}>
+        <div
+          className={`min-w-0 flex-1 ${isMobileSearchOpen ? "hidden min-[900px]:block" : ""}`}
+        >
           <Link
             href="/"
             className="block max-w-full truncate whitespace-nowrap text-xl font-bold tracking-tight text-(--primary-color) no-underline sm:text-3xl lg:text-4xl"
@@ -46,7 +47,9 @@ export default function Navbar() {
         </div>
 
         {/* lado direito  */}
-        <div className={`flex shrink-0 items-center justify-end gap-2 sm:gap-3 ${isMobileSearchOpen ? "hidden min-[900px]:flex" : ""}`}>
+        <div
+          className={`flex shrink-0 items-center justify-end gap-2 sm:gap-3 ${isMobileSearchOpen ? "hidden min-[900px]:flex" : ""}`}
+        >
           <button
             type="button"
             onClick={() => setIsMobileSearchOpen(true)}
