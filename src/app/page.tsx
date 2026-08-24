@@ -100,7 +100,7 @@ const itemsMock: Product[] = [
   {
     productId: "12",
     name: "Mousepad Desk Mat Extra Grande",
-    originalPrice: 12990,
+    originalPrice: 9590,
     imageUrl: "/mousepad.jpg",
     category: ["gamer", "setup"],
   },
