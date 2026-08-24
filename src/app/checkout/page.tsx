@@ -52,7 +52,7 @@ export default function Checkout() {
     formState: { errors },
   } = form;
 
-  const { decreaseQuantity, addToCart: addItem } = useCartStore();
+  const { decreaseQuantity, addToCart: addItem, removeFromCart: removeItem } = useCartStore();
 
   const ccErrors = errors as Record<string, any>;
 
@@ -167,6 +167,7 @@ export default function Checkout() {
                       <DeleteOutlineIcon
                         fontSize="small"
                         sx={{ color: "text.secondary", cursor: "pointer" }}
+                        onClick={() => removeItem(item.productId)}
                       />
                     </Box>
                   );
