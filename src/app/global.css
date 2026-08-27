@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+:root {
+  --primary-color: #3525cd;
+  --secondary-color: #ffffff;
+  --tertiary-color: #c7c4d8;
+  --neutral-color: #f2f4f6;
+  --font-family: "Inter", sans-serif;
+  --primary-font-color: #191c1e;
+  --offer-color: #006e4b;
+}
+
+html {
+  font-size: 10px;
+}
+
+@media (max-width: 639px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

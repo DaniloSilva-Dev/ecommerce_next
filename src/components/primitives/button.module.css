@@ -1,0 +1,41 @@
+.primary {
+  padding: 0.8rem 1.6rem;
+  border-radius: 0.8rem;
+  background-color: var(--primary-color);
+  font-size: 1.4rem;
+  color: var(--secondary-color);
+  cursor: pointer;
+}
+
+.primary:disabled {
+  background-color: #9ca3af;
+  color: #e5e7eb;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.secondary {
+  width: 100%;
+  border-radius: 0.8rem;
+  border: 1px solid;
+  border-color: #c7c4d8;
+  background-color: var(--neutral-color);
+  color: var(--primary-font-color);
+  align-items: center;
+  cursor: pointer;
+}
+
+.secondary:hover {
+  color: var(--secondary-color);
+  background-color: var(--primary-color);
+}
+
+.tertiary {
+  width: 20.5rem;
+  border: 0.1rem solid;
+  background-color: inherit;
+  border-color: #c7c4d8;
+  color: var(--primary-font-color);
+  align-items: center;
+  cursor: pointer;
+}
